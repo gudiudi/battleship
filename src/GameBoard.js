@@ -26,7 +26,16 @@ export default class GameBoard {
 		return true;
 	}
 
-	attack(x, y) {}
+	attack(x, y) {
+		const coord = this.#board[x][y];
+
+		if (coord === null || coord.hit === true) return false;
+
+		coord.hit = true;
+		coord.ship.hit();
+
+		return true;
+	}
 
 	get board() {
 		return this.#board;
