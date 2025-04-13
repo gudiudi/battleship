@@ -17,13 +17,13 @@ describe("Ship", () => {
 		for (let i = 0; i < ship.length - 1; i++) {
 			ship.hit();
 		}
-		expect(ship.isSunk()).toBe(false);
+		expect(ship.sunk()).toBe(false);
 	});
 
 	it("Sunk the ship after enough hits", () => {
 		for (let i = 0; i < ship.length; i++) {
 			ship.hit();
 		}
-		expect(ship.isSunk()).toBe(true);
+		expect(ship.sunk()).toBe(true);
 	});
 });

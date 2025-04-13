@@ -1,23 +1,23 @@
 export default class Ship {
-	#ship;
+	#data;
 
 	constructor(length) {
-		this.#ship = { length, hits: 0 };
+		this.#data = { length, hits: 0 };
 	}
 
 	hit() {
-		this.#ship.hits += 1;
+		this.#data.hits += 1;
 	}
 
-	isSunk() {
-		return this.#ship.hits >= this.#ship.length;
+	sunk() {
+		return this.#data.hits >= this.#data.length;
 	}
 
 	get length() {
-		return this.#ship.length;
+		return this.#data.length;
 	}
 
 	get hits() {
-		return this.#ship.hits;
+		return this.#data.hits;
 	}
 }

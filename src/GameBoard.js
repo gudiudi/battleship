@@ -1,17 +1,17 @@
 export default class GameBoard {
 	#size;
 	#board;
-	#ships;
+	#fleet;
 	#sunk;
 
 	constructor(size) {
 		this.#size = size;
 		this.#board = [...Array(size)].map(() => new Array(size).fill(null));
-		this.#ships = new Set();
+		this.#fleet = new Set();
 		this.#sunk = 0;
 	}
 
-	add(ship, x, y, dx = 0, dy = 1) {
+	place(ship, x, y, dx = 0, dy = 1) {
 		if (
 			x < 0 ||
 			y < 0 ||
@@ -19,7 +19,7 @@ export default class GameBoard {
 			(dy !== 0 && dy !== 1) ||
 			(dx === 0 && dy === 0) ||
 			(dx === 1 && dy === 1) ||
-			this.#ships.has(ship) ||
+			this.#fleet.has(ship) ||
 			x + dx * (ship.length - 1) >= this.#size ||
 			y + dy * (ship.length - 1) >= this.#size
 		) {
@@ -34,12 +34,12 @@ export default class GameBoard {
 			this.#board[x + dx * i][y + dy * i] = { ship, hit: false };
 		}
 
-		this.#ships.add(ship);
+		this.#fleet.add(ship);
 
 		return true;
 	}
 
-	attack(x, y) {
+	hit(x, y) {
 		if (x < 0 || y < 0 || x >= this.#size || y >= this.#size) return false;
 
 		const coord = this.#board[x][y];
@@ -48,13 +48,13 @@ export default class GameBoard {
 		coord.hit = true;
 		coord.ship.hit();
 
-		if (coord.ship.isSunk()) this.#sunk++;
+		if (coord.ship.sunk()) this.#sunk++;
 
 		return true;
 	}
 
-	allSunk() {
-		return this.#sunk === this.#ships.size;
+	lost() {
+		return this.#sunk === this.#fleet.size;
 	}
 
 	get board() {
