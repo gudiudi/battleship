@@ -58,10 +58,8 @@ export default class GameBoard {
 	}
 
 	get board() {
-		return this.#board;
-	}
-
-	get ships() {
-		return this.#ships;
+		return this.#board.map((row) =>
+			row.map((cell) => (cell ? { ...cell } : null)),
+		);
 	}
 }
