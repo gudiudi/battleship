@@ -13,10 +13,6 @@ export default class Ship {
 		return this.#ship.hits >= this.#ship.length;
 	}
 
-	get ship() {
-		return this.#ship;
-	}
-
 	get length() {
 		return this.#ship.length;
 	}
