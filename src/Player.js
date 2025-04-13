@@ -1,23 +1,7 @@
-export default class Player {
-	#gameBoard;
+import Participant from "./Participant";
 
-	constructor(gameBoard) {
-		this.#gameBoard = gameBoard;
-	}
-
-	placeShip(ship, x, y, dx = 0, dy = 1) {
-		return this.#gameBoard.place(ship, x, y, dx, dy);
-	}
-
-	receiveAttack(x, y) {
-		return this.#gameBoard.receiveAttack(x, y);
-	}
-
-	get board() {
-		return this.#gameBoard.boardSnapshot;
-	}
-
-	get hasLost() {
-		return this.#gameBoard.areAllShipsSunk;
+export default class Player extends Participant {
+	makeAttack(opponent, x, y) {
+		return opponent.receiveAttack(x, y);
 	}
 }
