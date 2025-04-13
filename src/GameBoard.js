@@ -11,7 +11,7 @@ export default class GameBoard {
 		this.#sunk = 0;
 	}
 
-	place(ship, x, y, dx = 0, dy = 1) {
+	placeShip(ship, x, y, dx = 0, dy = 1) {
 		const isValidDirection = (dx === 0 && dy === 1) || (dx === 1 && dy === 0);
 		if (!isValidDirection || this.#fleet.has(ship)) return false;
 
