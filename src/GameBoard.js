@@ -20,11 +20,13 @@ export default class GameBoard {
 		}
 
 		for (let i = 0; i < ship.length; i++) {
-			this.#board[x + dx * i][y + dy * i] = ship;
+			this.#board[x + dx * i][y + dy * i] = { ship, hit: false };
 		}
 
 		return true;
 	}
+
+	attack(x, y) {}
 
 	get board() {
 		return this.#board;
