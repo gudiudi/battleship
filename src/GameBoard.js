@@ -36,7 +36,13 @@ export default class GameBoard {
 		if (x < 0 || y < 0 || x >= this.#size || y >= this.#size) return false;
 
 		const cell = this.#board[x][y];
-		if (!cell || cell.hit) return false;
+
+		if (cell?.hit) return false;
+
+		if (!cell) {
+			this.#board[x][y] = { hit: true };
+			return true;
+		}
 
 		cell.hit = true;
 		cell.ship.hit();
