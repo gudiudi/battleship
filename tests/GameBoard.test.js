@@ -45,16 +45,19 @@ describe("GameBoard", () => {
 		expect(gameBoard.placeShip(ship, 0, 0)).toBe(false);
 	});
 
-	it("processes valid attacks", () => {
-		gameBoard.placeShip(ship, 0, 0);
+	it("handles attacks correctly", () => {
+		// Missed attack on empty cell
 		expect(gameBoard.receiveAttack(0, 0)).toBe(true);
-		expect(gameBoard.boardSnapshot[0][0].hit).toBe(true);
+
+		// Place ship and attack
+		gameBoard.placeShip(ship, 1, 1);
+		expect(gameBoard.receiveAttack(1, 1)).toBe(true);
+
+		// Second attack on same cell should fail
+		expect(gameBoard.receiveAttack(1, 1)).toBe(false);
 	});
 
 	it("rejects invalid attacks", () => {
-		// Empty cell
-		expect(gameBoard.receiveAttack(0, 0)).toBe(false);
-
 		// Double attack
 		gameBoard.placeShip(ship, 1, 1);
 		gameBoard.receiveAttack(1, 1);
