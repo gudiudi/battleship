@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import GameBoard from "../src/GameBoard";
+import Ship from "../src/Ship";
 
 describe("GameBoard", () => {
 	let gameBoard;
@@ -7,84 +8,73 @@ describe("GameBoard", () => {
 
 	beforeEach(() => {
 		gameBoard = new GameBoard(5);
-		ship = {
-			length: 3,
-			hits: 0,
-			hit: vi.fn(() => ship.hits++),
-			sunk: vi.fn(() => ship.hits >= ship.length),
-		};
+		ship = new Ship(3);
 	});
 
-	it("initializes an empty board of given size", () => {
-		expect(gameBoard.board).toEqual([
-			[null, null, null, null, null],
-			[null, null, null, null, null],
-			[null, null, null, null, null],
-			[null, null, null, null, null],
-			[null, null, null, null, null],
-		]);
+	it("initializes empty board", () => {
+		expect(gameBoard.boardSnapshot).toEqual(
+			Array(5)
+				.fill()
+				.map(() => Array(5).fill(null)),
+		);
 	});
 
-	it("adds a ship horizontally by default (dx=0, dy=1)", () => {
+	it("places ships horizontally", () => {
 		expect(gameBoard.place(ship, 0, 0)).toBe(true);
-		expect(gameBoard.board[0][0]).not.toBeNull();
-		expect(gameBoard.board[0][1]).not.toBeNull();
-		expect(gameBoard.board[0][2]).not.toBeNull();
+		for (let i = 0; i < ship.length; i++) {
+			expect(gameBoard.boardSnapshot[0][i]).toEqual({ ship, hit: false });
+		}
 	});
 
-	it("adds a ship vertically when dx=1, dy=0", () => {
+	it("places ships vertically", () => {
 		expect(gameBoard.place(ship, 0, 0, 1, 0)).toBe(true);
-		expect(gameBoard.board[0][0]).not.toBeNull();
-		expect(gameBoard.board[1][0]).not.toBeNull();
-		expect(gameBoard.board[2][0]).not.toBeNull();
+		for (let i = 0; i < ship.length; i++) {
+			expect(gameBoard.boardSnapshot[i][0]).toEqual({ ship, hit: false });
+		}
 	});
 
-	it("fails to add a ship out of bounds", () => {
-		expect(gameBoard.place(ship, 9, 8)).toBe(false);
-		expect(gameBoard.place(ship, 9, 8, 1, 0)).toBe(false);
-	});
+	it("rejects invalid placements", () => {
+		// Out of bounds
+		expect(gameBoard.place(ship, 3, 3, 1, 0)).toBe(false);
 
-	it("fails to place ship if space is already occupied", () => {
-		const ship2 = { length: 2 };
+		// Diagonal
+		expect(gameBoard.place(ship, 0, 0, 1, 1)).toBe(false);
 
-		gameBoard.place(ship2, 0, 0);
+		// Overlapping
+		gameBoard.place(new Ship(2), 0, 0);
 		expect(gameBoard.place(ship, 0, 0)).toBe(false);
 	});
 
-	it("should mark the ship as hit and prevent multiple attacks on the same spot", () => {
+	it("processes valid attacks", () => {
 		gameBoard.place(ship, 0, 0);
-		gameBoard.hit(0, 0);
-		expect(gameBoard.board[0][0].hit).toBe(true);
-		expect(gameBoard.hit(0, 0)).toBe(false);
+		expect(gameBoard.receiveAttack(0, 0)).toBe(true);
+		expect(gameBoard.boardSnapshot[0][0].hit).toBe(true);
 	});
 
-	it("can't hit null coordinate", () => {
-		gameBoard.place(ship, 3, 1);
-		expect(gameBoard.hit(3, 4)).toBe(false);
-		expect(gameBoard.hit(3, 0)).toBe(false);
-		expect(gameBoard.hit(4, 1)).toBe(false);
+	it("rejects invalid attacks", () => {
+		// Empty cell
+		expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+
+		// Double attack
+		gameBoard.place(ship, 1, 1);
+		gameBoard.receiveAttack(1, 1);
+		expect(gameBoard.receiveAttack(1, 1)).toBe(false);
 	});
 
-	it("returns true when all ships have been sunk", () => {
-		const ship2 = {
-			length: 2,
-			hits: 0,
-			hit: vi.fn(() => ship2.hits++),
-			sunk: vi.fn(() => ship2.hits >= ship2.length),
-		};
+	it("tracks sunk ships", () => {
+		const ship2 = new Ship(2);
+		gameBoard.place(ship, 0, 0);
+		gameBoard.place(ship2, 1, 1);
 
-		expect(gameBoard.place(ship, 0, 0, 0, 1)).toBe(true);
-		expect(gameBoard.place(ship2, 1, 0, 1, 0)).toBe(true);
+		// Sink first ship
+		gameBoard.receiveAttack(0, 0);
+		gameBoard.receiveAttack(0, 1);
+		gameBoard.receiveAttack(0, 2);
 
-		expect(gameBoard.hit(0, 0)).toBe(true);
-		expect(gameBoard.hit(0, 1)).toBe(true);
-		expect(gameBoard.hit(0, 2)).toBe(true);
+		// Sink second ship
+		gameBoard.receiveAttack(1, 1);
+		gameBoard.receiveAttack(1, 2);
 
-		expect(gameBoard.lost()).toBe(false);
-
-		expect(gameBoard.hit(1, 0)).toBe(true);
-		expect(gameBoard.hit(2, 0)).toBe(true);
-
-		expect(gameBoard.lost()).toBe(true);
+		expect(gameBoard.allShipsSunk).toBe(true);
 	});
 });

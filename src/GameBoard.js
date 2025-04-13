@@ -4,7 +4,7 @@ export default class GameBoard {
 	#fleet;
 	#sunk;
 
-	constructor(size) {
+	constructor(size = 10) {
 		this.#size = size;
 		this.#board = [...Array(size)].map(() => new Array(size).fill(null));
 		this.#fleet = new Set();
@@ -12,19 +12,12 @@ export default class GameBoard {
 	}
 
 	place(ship, x, y, dx = 0, dy = 1) {
-		if (
-			x < 0 ||
-			y < 0 ||
-			(dx !== 0 && dx !== 1) ||
-			(dy !== 0 && dy !== 1) ||
-			(dx === 0 && dy === 0) ||
-			(dx === 1 && dy === 1) ||
-			this.#fleet.has(ship) ||
-			x + dx * (ship.length - 1) >= this.#size ||
-			y + dy * (ship.length - 1) >= this.#size
-		) {
-			return false;
-		}
+		const isValidDirection = (dx === 0 && dy === 1) || (dx === 1 && dy === 0);
+		if (!isValidDirection || this.#fleet.has(ship)) return false;
+
+		const finalX = x + dx * (ship.length - 1);
+		const finalY = y + dy * (ship.length - 1);
+		if (finalX >= this.#size || finalY >= this.#size) return false;
 
 		for (let i = 0; i < ship.length; i++) {
 			if (this.#board[x + dx * i][y + dy * i] !== null) return false;
@@ -39,25 +32,25 @@ export default class GameBoard {
 		return true;
 	}
 
-	hit(x, y) {
+	receiveAttack(x, y) {
 		if (x < 0 || y < 0 || x >= this.#size || y >= this.#size) return false;
 
-		const coord = this.#board[x][y];
-		if (!coord || coord.hit) return false;
+		const cell = this.#board[x][y];
+		if (!cell || cell.hit) return false;
 
-		coord.hit = true;
-		coord.ship.hit();
+		cell.hit = true;
+		cell.ship.hit();
 
-		if (coord.ship.sunk()) this.#sunk++;
+		if (cell.ship.isSunk) this.#sunk++;
 
 		return true;
 	}
 
-	lost() {
+	get allShipsSunk() {
 		return this.#sunk === this.#fleet.size;
 	}
 
-	get board() {
+	get boardSnapshot() {
 		return this.#board.map((row) =>
 			row.map((cell) => (cell ? { ...cell } : null)),
 		);

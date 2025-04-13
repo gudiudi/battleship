@@ -1,23 +1,29 @@
 export default class Ship {
-	#data;
+	#length;
+	#hits;
 
 	constructor(length) {
-		this.#data = { length, hits: 0 };
+		if (!Number.isInteger(length) || length < 1) {
+			throw new Error("Ship length must be a positive integer");
+		}
+
+		this.#length = length;
+		this.#hits = 0;
 	}
 
 	hit() {
-		this.#data.hits += 1;
+		if (!this.isSunk) this.#hits++;
 	}
 
-	sunk() {
-		return this.#data.hits >= this.#data.length;
+	get isSunk() {
+		return this.#hits >= this.#length;
 	}
 
 	get length() {
-		return this.#data.length;
+		return this.#length;
 	}
 
 	get hits() {
-		return this.#data.hits;
+		return this.#hits;
 	}
 }
