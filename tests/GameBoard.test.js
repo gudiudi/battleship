@@ -64,4 +64,27 @@ describe("GameBoard", () => {
 		expect(gameBoard.attack(3, 0)).toBe(false);
 		expect(gameBoard.attack(4, 1)).toBe(false);
 	});
+
+	it("returns true when all ships have been sunk", () => {
+		const ship2 = {
+			length: 2,
+			hits: 0,
+			hit: vi.fn(() => ship2.hits++),
+			isSunk: vi.fn(() => ship2.hits >= ship2.length),
+		};
+
+		expect(gameBoard.add(ship, 0, 0, 0, 1)).toBe(true);
+		expect(gameBoard.add(ship2, 1, 0, 1, 0)).toBe(true);
+
+		expect(gameBoard.attack(0, 0)).toBe(true);
+		expect(gameBoard.attack(0, 1)).toBe(true);
+		expect(gameBoard.attack(0, 2)).toBe(true);
+
+		expect(gameBoard.allSunk()).toBe(false);
+
+		expect(gameBoard.attack(1, 0)).toBe(true);
+		expect(gameBoard.attack(2, 0)).toBe(true);
+
+		expect(gameBoard.allSunk()).toBe(true);
+	});
 });
