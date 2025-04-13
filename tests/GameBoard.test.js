@@ -75,6 +75,6 @@ describe("GameBoard", () => {
 		gameBoard.receiveAttack(1, 1);
 		gameBoard.receiveAttack(1, 2);
 
-		expect(gameBoard.allShipsSunk).toBe(true);
+		expect(gameBoard.areAllShipsSunk).toBe(true);
 	});
 });

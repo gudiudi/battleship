@@ -46,7 +46,7 @@ export default class GameBoard {
 		return true;
 	}
 
-	get allShipsSunk() {
+	get areAllShipsSunk() {
 		return this.#sunk === this.#fleet.size;
 	}
 
