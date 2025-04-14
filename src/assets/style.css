@@ -1,0 +1,37 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+}
+
+#app {
+	display: flex;
+	align-items: center;
+	gap: 8em;
+}
+
+.board {
+	display: grid;
+	grid-template-columns: repeat(10, 2em);
+}
+
+.cell {
+	height: 2em;
+	width: 2em;
+	border-right: 1px solid #107fff8e;
+	border-bottom: 1px solid #107fff8e;
+}
+
+.cell:nth-child(-n + 10) {
+	border-top: 1px solid #107fff8e;
+}
+
+.cell:nth-child(10n + 1) {
+	border-left: 1px solid #107fff8e;
+}

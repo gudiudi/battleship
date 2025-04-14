@@ -2,7 +2,13 @@ import Computer from "./Computer";
 import GameBoard from "./GameBoard";
 import Player from "./Player";
 import Ship from "./Ship";
+import UI from "./UI";
+import "./assets/style.css";
 
+const ui = new UI();
+ui.init();
+
+/*
 const makeFleet = (participant) => {
 	const fleet = {
 		5: 2,
@@ -43,3 +49,4 @@ const makeFleet = (participant) => {
 
 	console.log(computer.boardSnapshot);
 })();
+*/
