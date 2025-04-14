@@ -35,3 +35,8 @@ body {
 .cell:nth-child(10n + 1) {
 	border-left: 1px solid #107fff8e;
 }
+
+.cell.ship {
+	box-shadow: 0 0 0 1px #0065d8;
+	margin: 0px;
+}

@@ -5,16 +5,12 @@ import Ship from "./Ship";
 import UI from "./UI";
 import "./assets/style.css";
 
-const ui = new UI();
-ui.init();
-
-/*
 const makeFleet = (participant) => {
 	const fleet = {
-		5: 2,
-		4: 3,
-		2: 4,
-		1: 5,
+		4: 2,
+		3: 2,
+		2: 2,
+		1: 2,
 	};
 
 	for (const [ship, count] of Object.entries(fleet)) {
@@ -24,6 +20,15 @@ const makeFleet = (participant) => {
 	}
 };
 
+const computerBoard = new GameBoard();
+const computer = new Computer(computerBoard);
+makeFleet(computer);
+
+const ui = new UI();
+ui.init();
+ui.updateBoard(computerBoard.boardSnapshot, ui.computerBoardEl);
+
+/*
 (() => {
 	const gameBoard = new GameBoard();
 	const player = new Player(gameBoard);

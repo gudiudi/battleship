@@ -14,7 +14,19 @@ export default class UI {
 		this.#createGrid(this.#computerBoardEl, size);
 	}
 
-	renderBoard(gameBoard, boardEl) {}
+	updateBoard(gameBoard, boardEl) {
+		console.log(gameBoard);
+		gameBoard.forEach((row, x) => {
+			row.forEach((cell, y) => {
+				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+				if (cell?.hit) {
+					cellEl.classList.add(cell.ship ? "hit" : "miss");
+				} else if (cell?.ship) {
+					cellEl.classList.add("ship");
+				}
+			});
+		});
+	}
 
 	#createGrid(boardContainer, size) {
 		const fragment = document.createDocumentFragment();
@@ -37,5 +49,13 @@ export default class UI {
 		board.className = className;
 		this.#appEl.appendChild(board);
 		return board;
+	}
+
+	get playerBoardEl() {
+		return this.#playerBoardEl;
+	}
+
+	get computerBoardEl() {
+		return this.#computerBoardEl;
 	}
 }

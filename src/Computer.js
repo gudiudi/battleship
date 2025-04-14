@@ -2,11 +2,11 @@ import Participant from "./Participant";
 
 export default class Computer extends Participant {
 	placeShip(ship) {
-		const cells = this.#getEmptyCells();
-		if (cells.length < 1) return false;
-
 		let placed = false;
 		while (!placed) {
+			const cells = this.#getEmptyCells();
+			if (cells.length < 1) return false;
+
 			const [x, y] = cells[Math.floor(Math.random() * cells.length)];
 			const isHorizontal = Math.random() < 0.5;
 			const dx = isHorizontal ? 0 : 1;
