@@ -62,6 +62,15 @@ export default class GameBoard {
 		);
 	}
 
+	get fleetSnapshot() {
+		return [...this.#fleet].map((ship) => ({
+			length: ship.length,
+			hits: ship.hits,
+			isSunk: ship.isSunk,
+			coordinatesSnapshot: ship.coordinatesSnapshot,
+		}));
+	}
+
 	#isValidDirection(dx, dy) {
 		return (dx === 0 && dy === 1) || (dx === 1 && dy === 0);
 	}
@@ -98,6 +107,7 @@ export default class GameBoard {
 			const cy = y + dy * i;
 
 			this.#board[cx][cy] = { ship, hit: false };
+			ship.addCoordinate(cx, cy);
 
 			for (const [ox, oy] of adjacents) {
 				const nx = cx + ox;

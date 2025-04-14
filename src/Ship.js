@@ -1,6 +1,7 @@
 export default class Ship {
 	#length;
 	#hits;
+	#coordinates;
 
 	constructor(length) {
 		if (!Number.isInteger(length) || length < 1) {
@@ -9,10 +10,15 @@ export default class Ship {
 
 		this.#length = length;
 		this.#hits = 0;
+		this.#coordinates = [];
 	}
 
 	hit() {
 		if (!this.isSunk) this.#hits++;
+	}
+
+	addCoordinate(x, y) {
+		this.#coordinates.push([x, y]);
 	}
 
 	get isSunk() {
@@ -25,5 +31,9 @@ export default class Ship {
 
 	get hits() {
 		return this.#hits;
+	}
+
+	get coordinatesSnapshot() {
+		return this.#coordinates.map(([x, y]) => [x, y]);
 	}
 }
