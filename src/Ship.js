@@ -21,6 +21,10 @@ export default class Ship {
 		this.#coordinates.push([x, y]);
 	}
 
+	clearCoordinates() {
+		this.#coordinates = [];
+	}
+
 	get isSunk() {
 		return this.#hits >= this.#length;
 	}
