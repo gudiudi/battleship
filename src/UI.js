@@ -14,16 +14,28 @@ export default class UI {
 		this.#createGrid(this.#computerBoardEl, size);
 	}
 
-	updateBoard(gameBoard, boardEl, revealShips = false) {
+	updateBoard(gameBoard, boardEl, hideShips = false) {
 		gameBoard.forEach((row, x) => {
 			row.forEach((cell, y) => {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
 				if (cell?.hit) {
-					cellEl.classList.add(cell.ship ? "hit" : "miss"); // check with board logic not this!
-				} else if (revealShips && cell?.ship) {
+					cellEl.classList.add(cell.ship ? "hit" : "miss");
+				} else if (!hideShips && cell?.ship) {
 					cellEl.classList.add("ship");
 				}
 			});
+		});
+	}
+
+	bindCellClickHandler(boardEl, handler) {
+		boardEl.addEventListener("click", (e) => {
+			const cell = e.target.closest(".cell");
+			if (!cell) return;
+
+			const x = Number.parseInt(cell.dataset.x, 10);
+			const y = Number.parseInt(cell.dataset.y, 10);
+
+			handler(x, y);
 		});
 	}
 
@@ -43,9 +55,10 @@ export default class UI {
 		boardContainer.appendChild(fragment);
 	}
 
-	#createBoardContainer(className) {
+	#createBoardContainer(className, disabled = false) {
 		const board = document.createElement("div");
 		board.className = className;
+		disabled && board.classList.add("disabled");
 		this.#appEl.appendChild(board);
 		return board;
 	}

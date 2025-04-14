@@ -20,13 +20,23 @@ const makeFleet = (participant) => {
 	}
 };
 
+const playerBoard = new GameBoard();
+const player = new Player(playerBoard);
+
 const computerBoard = new GameBoard();
 const computer = new Computer(computerBoard);
 makeFleet(computer);
 
 const ui = new UI();
 ui.init();
-ui.updateBoard(computerBoard.boardSnapshot, ui.computerBoardEl);
+ui.updateBoard(computerBoard.boardSnapshot, ui.computerBoardEl, true);
+ui.bindCellClickHandler(ui.computerBoardEl, (x, y) => {
+	const makeAttack = player.makeAttack(computer, x, y);
+	if (makeAttack) {
+		console.log(computerBoard.boardSnapshot);
+		ui.updateBoard(computerBoard.boardSnapshot, ui.computerBoardEl, true);
+	}
+});
 
 /*
 (() => {

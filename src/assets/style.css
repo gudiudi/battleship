@@ -21,11 +21,24 @@ body {
 	grid-template-columns: repeat(10, 2em);
 }
 
+.board.disabled {
+	pointer-events: none;
+	opacity: 0.3;
+	cursor: not-allowed;
+}
+
 .cell {
 	height: 2em;
 	width: 2em;
 	border-right: 1px solid #107fff8e;
 	border-bottom: 1px solid #107fff8e;
+	cursor: pointer;
+	position: relative;
+}
+
+.cell:hover {
+	outline: 1px solid #0065d8;
+	border: 1px solid #0065d8;
 }
 
 .cell:nth-child(-n + 10) {
@@ -39,4 +52,16 @@ body {
 .cell.ship {
 	outline: 1px solid #0065d8;
 	border: 1px solid #0065d8;
+}
+
+.cell.miss::after {
+	content: "";
+	width: 6px;
+	height: 6px;
+	background-color: #555;
+	border-radius: 50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
