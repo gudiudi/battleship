@@ -6,7 +6,7 @@ export default class GameBoard {
 
 	constructor(size = 10) {
 		this.#size = size;
-		this.#board = [...Array(size)].map(() => new Array(size).fill(null));
+		this.#board = this.#createBoard(size);
 		this.#fleet = new Set();
 		this.#sunk = 0;
 	}
@@ -52,6 +52,10 @@ export default class GameBoard {
 		return true;
 	}
 
+	clearBoard() {
+		this.#board = this.#createBoard(this.#size);
+	}
+
 	get areAllShipsSunk() {
 		return this.#sunk === this.#fleet.size;
 	}
@@ -69,6 +73,10 @@ export default class GameBoard {
 			isSunk: ship.isSunk,
 			coordinatesSnapshot: ship.coordinatesSnapshot,
 		}));
+	}
+
+	#createBoard(size) {
+		return [...Array(size)].map(() => new Array(size).fill(null));
 	}
 
 	#isValidDirection(dx, dy) {
