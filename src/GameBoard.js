@@ -52,6 +52,50 @@ export default class GameBoard {
 		return true;
 	}
 
+	getShipAtCoordinate(x, y) {
+		const cell = this.#board[x][y];
+		return cell?.ship || null;
+	}
+
+	changeShipDirection(ship) {
+		if (ship.length < 2) return false;
+
+		this.#fleet.delete(ship);
+
+		const afloatShips = [...this.#fleet];
+
+		this.clearBoard();
+
+		for (const afloatShip of afloatShips) {
+			const shipCoords = afloatShip.coordinatesSnapshot;
+			const [x, y] = shipCoords[0];
+			const [dx, dy] =
+				shipCoords[0][0] === shipCoords[shipCoords.length - 1][0]
+					? [0, 1]
+					: [1, 0];
+
+			afloatShip.clearCoordinates();
+
+			this.placeShip(afloatShip, x, y, dx, dy);
+		}
+
+		const shipCoords = ship.coordinatesSnapshot;
+		const [x, y] = shipCoords[0];
+		const [dx, dy] =
+			shipCoords[0][0] === shipCoords[shipCoords.length - 1][0]
+				? [1, 0]
+				: [0, 1];
+
+		const success = this.placeShip(ship, x, y, dx, dy);
+
+		if (!success) {
+			this.placeShip(ship, x, y, dy, dx);
+			return false;
+		}
+
+		return true;
+	}
+
 	clearBoard() {
 		this.#board = this.#createBoard(this.#size);
 		this.#fleet = new Set();

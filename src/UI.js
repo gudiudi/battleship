@@ -39,6 +39,15 @@ export default class UI {
 		});
 	}
 
+	clearShipFromBoardEl(ship, boardEl) {
+		for (const [x, y] of ship.coordinatesSnapshot) {
+			const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+			if (cellEl) {
+				cellEl.classList.remove("ship");
+			}
+		}
+	}
+
 	#createGrid(boardContainer, size) {
 		const fragment = document.createDocumentFragment();
 

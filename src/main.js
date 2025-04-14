@@ -27,6 +27,15 @@ const selfBoard = new GameBoard();
 const self = new Player(selfBoard);
 makeFleet(self);
 ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
+ui.bindCellClickHandler(ui.selfBoardEl, (x, y) => {
+	const ship = selfBoard.getShipAtCoordinate(x, y);
+	if (ship) {
+		ui.clearShipFromBoardEl(ship, ui.selfBoardEl);
+		const success = selfBoard.changeShipDirection(ship);
+		console.log(success);
+		ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
+	}
+});
 
 /*
 const opponentBoard = new GameBoard();
