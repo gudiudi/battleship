@@ -17,15 +17,19 @@ export default class UI {
 	renderBoard(gameBoard, boardEl) {}
 
 	#createGrid(boardContainer, size) {
-		for (let cell = 0; cell < size * size; cell++) {
-			const x = Math.floor(cell / size);
-			const y = cell % size;
-			const cellEl = document.createElement("div");
-			cellEl.classList.add("cell");
-			cellEl.dataset.x = x;
-			cellEl.dataset.y = y;
-			boardContainer.appendChild(cellEl);
+		const fragment = document.createDocumentFragment();
+
+		for (let x = 0; x < size; x++) {
+			for (let y = 0; y < size; y++) {
+				const cellEl = document.createElement("div");
+				cellEl.classList.add("cell");
+				cellEl.dataset.x = x;
+				cellEl.dataset.y = y;
+				fragment.appendChild(cellEl);
+			}
 		}
+
+		boardContainer.appendChild(fragment);
 	}
 
 	#createBoardContainer(className) {
