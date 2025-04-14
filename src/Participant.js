@@ -5,8 +5,21 @@ export default class Participant {
 		this.#gameBoard = gameBoard;
 	}
 
-	placeShip(ship, x, y, dx = 0, dy = 1) {
-		return this.#gameBoard.placeShip(ship, x, y, dx, dy);
+	placeShip(ship) {
+		let placed = false;
+		while (!placed) {
+			const cells = this.#getEmptyCells();
+			if (cells.length < 1) return false;
+
+			const [x, y] = cells[Math.floor(Math.random() * cells.length)];
+			const isHorizontal = Math.random() < 0.5;
+			const dx = isHorizontal ? 0 : 1;
+			const dy = isHorizontal ? 1 : 0;
+
+			placed = this.#gameBoard.placeShip(ship, x, y, dx, dy);
+		}
+
+		return placed;
 	}
 
 	receiveAttack(x, y) {
@@ -19,5 +32,17 @@ export default class Participant {
 
 	get hasLost() {
 		return this.#gameBoard.areAllShipsSunk;
+	}
+
+	#getEmptyCells() {
+		const cells = [];
+		for (const [x, row] of this.boardSnapshot.entries()) {
+			for (const [y, cell] of row.entries()) {
+				if (cell) continue;
+				cells.push([x, y]);
+			}
+		}
+
+		return cells;
 	}
 }

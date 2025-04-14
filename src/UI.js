@@ -8,8 +8,8 @@ export default class UI {
 	}
 
 	init(size = 10) {
-		this.#playerBoardEl = this.#createBoardContainer("board");
-		this.#computerBoardEl = this.#createBoardContainer("board");
+		this.#playerBoardEl = this.#createBoardContainer("playerBoard");
+		this.#computerBoardEl = this.#createBoardContainer("computerBoard", true);
 		this.#createGrid(this.#playerBoardEl, size);
 		this.#createGrid(this.#computerBoardEl, size);
 	}
@@ -55,9 +55,10 @@ export default class UI {
 		boardContainer.appendChild(fragment);
 	}
 
-	#createBoardContainer(className, disabled = false) {
+	#createBoardContainer(id, disabled = false) {
 		const board = document.createElement("div");
-		board.className = className;
+		board.className = "board";
+		board.id = id;
 		disabled && board.classList.add("disabled");
 		this.#appEl.appendChild(board);
 		return board;
