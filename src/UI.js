@@ -15,6 +15,8 @@ export default class UI {
 	}
 
 	updateBoard(gameBoard, boardEl, hideShips = false) {
+		this.#clearCellsState(boardEl);
+
 		gameBoard.forEach((row, x) => {
 			row.forEach((cell, y) => {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
@@ -39,15 +41,6 @@ export default class UI {
 		});
 	}
 
-	clearShipFromBoardEl(ship, boardEl) {
-		for (const [x, y] of ship.coordinatesSnapshot) {
-			const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-			if (cellEl) {
-				cellEl.classList.remove("ship");
-			}
-		}
-	}
-
 	#createGrid(boardContainer, size) {
 		const fragment = document.createDocumentFragment();
 
@@ -70,6 +63,12 @@ export default class UI {
 		disabled && board.classList.add("disabled");
 		this.#appEl.appendChild(board);
 		return board;
+	}
+
+	#clearCellsState(boardEl) {
+		for (const cell of boardEl.querySelectorAll(".cell")) {
+			cell.classList.remove("ship", "hit", "miss");
+		}
 	}
 
 	get selfBoardEl() {
