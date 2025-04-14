@@ -7,10 +7,10 @@ import "./assets/style.css";
 
 const makeFleet = (participant) => {
 	const fleet = {
-		4: 2,
+		4: 1,
 		3: 2,
-		2: 2,
-		1: 2,
+		2: 3,
+		1: 4,
 	};
 
 	for (const [ship, count] of Object.entries(fleet)) {

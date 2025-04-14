@@ -37,6 +37,6 @@ body {
 }
 
 .cell.ship {
-	box-shadow: 0 0 0 1px #0065d8;
-	margin: 0px;
+	outline: 1px solid #0065d8;
+	border: 1px solid #0065d8;
 }

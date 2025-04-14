@@ -14,14 +14,13 @@ export default class UI {
 		this.#createGrid(this.#computerBoardEl, size);
 	}
 
-	updateBoard(gameBoard, boardEl) {
-		console.log(gameBoard);
+	updateBoard(gameBoard, boardEl, revealShips = false) {
 		gameBoard.forEach((row, x) => {
 			row.forEach((cell, y) => {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
 				if (cell?.hit) {
-					cellEl.classList.add(cell.ship ? "hit" : "miss");
-				} else if (cell?.ship) {
+					cellEl.classList.add(cell.ship ? "hit" : "miss"); // check with board logic not this!
+				} else if (revealShips && cell?.ship) {
 					cellEl.classList.add("ship");
 				}
 			});
