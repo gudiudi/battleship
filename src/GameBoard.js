@@ -54,6 +54,8 @@ export default class GameBoard {
 
 	clearBoard() {
 		this.#board = this.#createBoard(this.#size);
+		this.#fleet = new Set();
+		this.#sunk = 0;
 	}
 
 	get areAllShipsSunk() {
