@@ -1,17 +1,17 @@
 export default class UI {
 	#appEl;
-	#playerBoardEl;
-	#computerBoardEl;
+	#selfBoardEl;
+	#opponentBoardEl;
 
 	constructor() {
 		this.#appEl = document.getElementById("app");
 	}
 
 	init(size = 10) {
-		this.#playerBoardEl = this.#createBoardContainer("playerBoard");
-		this.#computerBoardEl = this.#createBoardContainer("computerBoard", true);
-		this.#createGrid(this.#playerBoardEl, size);
-		this.#createGrid(this.#computerBoardEl, size);
+		this.#selfBoardEl = this.#createBoardContainer("self");
+		this.#opponentBoardEl = this.#createBoardContainer("opponent", true);
+		this.#createGrid(this.#selfBoardEl, size);
+		this.#createGrid(this.#opponentBoardEl, size);
 	}
 
 	updateBoard(gameBoard, boardEl, hideShips = false) {
@@ -55,20 +55,19 @@ export default class UI {
 		boardContainer.appendChild(fragment);
 	}
 
-	#createBoardContainer(id, disabled = false) {
+	#createBoardContainer(className, disabled = false) {
 		const board = document.createElement("div");
-		board.className = "board";
-		board.id = id;
+		board.classList.add("board", className);
 		disabled && board.classList.add("disabled");
 		this.#appEl.appendChild(board);
 		return board;
 	}
 
-	get playerBoardEl() {
-		return this.#playerBoardEl;
+	get selfBoardEl() {
+		return this.#selfBoardEl;
 	}
 
-	get computerBoardEl() {
-		return this.#computerBoardEl;
+	get opponentBoardEl() {
+		return this.#opponentBoardEl;
 	}
 }

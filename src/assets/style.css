@@ -60,11 +60,11 @@ body {
 	transform: translate(-50%, -50%);
 }
 
-#computerBoard > .cell {
+.board.opponent > .cell {
 	cursor: pointer;
 }
 
-#computerBoard > .cell:hover {
+.board.opponent > .cell:hover {
 	outline: 1px solid #0065d8;
 	border: 1px solid #0065d8;
 }

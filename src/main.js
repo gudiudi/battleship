@@ -26,17 +26,17 @@ ui.init();
 const playerBoard = new GameBoard();
 const player = new Player(playerBoard);
 makeFleet(player);
-ui.updateBoard(playerBoard.boardSnapshot, ui.playerBoardEl);
+ui.updateBoard(playerBoard.boardSnapshot, ui.selfBoardEl);
 
 const computerBoard = new GameBoard();
 const computer = new Computer(computerBoard);
 makeFleet(computer);
-ui.updateBoard(computerBoard.boardSnapshot, ui.computerBoardEl, true);
-ui.bindCellClickHandler(ui.computerBoardEl, (x, y) => {
+ui.updateBoard(computerBoard.boardSnapshot, ui.opponentBoardEl, true);
+ui.bindCellClickHandler(ui.opponentBoardEl, (x, y) => {
 	const makeAttack = player.makeAttack(computer, x, y);
 	if (makeAttack) {
 		console.log(computerBoard.boardSnapshot);
-		ui.updateBoard(computerBoard.boardSnapshot, ui.computerBoardEl, true);
+		ui.updateBoard(computerBoard.boardSnapshot, ui.opponentBoardEl, true);
 	}
 });
 
