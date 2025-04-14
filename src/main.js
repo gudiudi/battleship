@@ -23,47 +23,21 @@ const makeFleet = (participant) => {
 const ui = new UI();
 ui.init();
 
-const playerBoard = new GameBoard();
-const player = new Player(playerBoard);
-makeFleet(player);
-ui.updateBoard(playerBoard.boardSnapshot, ui.selfBoardEl);
-
-const computerBoard = new GameBoard();
-const computer = new Computer(computerBoard);
-makeFleet(computer);
-ui.updateBoard(computerBoard.boardSnapshot, ui.opponentBoardEl, true);
-ui.bindCellClickHandler(ui.opponentBoardEl, (x, y) => {
-	const makeAttack = player.makeAttack(computer, x, y);
-	if (makeAttack) {
-		console.log(computerBoard.boardSnapshot);
-		ui.updateBoard(computerBoard.boardSnapshot, ui.opponentBoardEl, true);
-	}
-});
+const selfBoard = new GameBoard();
+const self = new Player(selfBoard);
+makeFleet(self);
+ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
 
 /*
-(() => {
-	const gameBoard = new GameBoard();
-	const player = new Player(gameBoard);
-
-	const carrier = new Ship(5);
-	const destroyer = new Ship(4);
-	const submarine = new Ship(3);
-	const patrolBoat = new Ship(2);
-
-	player.placeShip(carrier, 0, 0);
-	player.placeShip(destroyer, 1, 5);
-	player.placeShip(submarine, 2, 3);
-	player.placeShip(patrolBoat, 4, 5);
-
-	console.log(player.boardSnapshot);
-})();
-
-(() => {
-	const computerBoard = new GameBoard();
-	const computer = new Computer(computerBoard);
-
-	makeFleet(computer);
-
-	console.log(computer.boardSnapshot);
-})();
+const opponentBoard = new GameBoard();
+const opponent = new Computer(opponentBoard);
+makeFleet(opponent);
+ui.updateBoard(opponentBoard.boardSnapshot, ui.opponentBoardEl, true);
+ui.bindCellClickHandler(ui.opponentBoardEl, (x, y) => {
+	const success = self.makeAttack(opponent, x, y);
+	if (success) {
+		console.log(opponentBoard.boardSnapshot);
+		ui.updateBoard(opponentBoard.boardSnapshot, ui.opponentBoardEl, true);
+	}
+});
 */
