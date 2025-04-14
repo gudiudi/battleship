@@ -17,16 +17,16 @@ export default class UI {
 	updateBoard(gameBoard, boardEl, hideShips = false) {
 		this.#clearCellsState(boardEl);
 
-		gameBoard.forEach((row, x) => {
-			row.forEach((cell, y) => {
+		for (const [x, row] of gameBoard.entries()) {
+			for (const [y, cell] of row.entries()) {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
 				if (cell?.hit) {
 					cellEl.classList.add(cell.ship ? "hit" : "miss");
 				} else if (!hideShips && cell?.ship) {
 					cellEl.classList.add("ship");
 				}
-			});
-		});
+			}
+		}
 	}
 
 	bindCellClickHandler(boardEl, handler) {
