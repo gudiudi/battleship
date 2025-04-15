@@ -34,6 +34,7 @@ function handleShipDirection(x, y) {
 	const ship = selfBoard.getShipAtCoordinate(x, y);
 	if (!ship) return;
 
+
 	const success = selfBoard.changeShipDirection(ship);
 	if (!success) return;
 

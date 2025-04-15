@@ -16,7 +16,7 @@ export default class Participant {
 			const dx = isHorizontal ? 0 : 1;
 			const dy = isHorizontal ? 1 : 0;
 
-			placed = this.#gameBoard.placeShip(ship, x, y, dx, dy);
+			placed = this.#gameBoard.placeShip(ship, x, y, { dx, dy });
 		}
 
 		return placed;

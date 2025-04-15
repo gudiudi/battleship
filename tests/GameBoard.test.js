@@ -27,7 +27,7 @@ describe("GameBoard", () => {
 	});
 
 	it("places ships vertically", () => {
-		expect(gameBoard.placeShip(ship, 0, 0, 1, 0)).toBe(true);
+		expect(gameBoard.placeShip(ship, 0, 0, { dx: 1, dy: 0 })).toBe(true);
 		for (let i = 0; i < ship.length; i++) {
 			expect(gameBoard.boardSnapshot[i][0]).toEqual({ ship, hit: false });
 		}
@@ -35,10 +35,10 @@ describe("GameBoard", () => {
 
 	it("rejects invalid placements", () => {
 		// Out of bounds
-		expect(gameBoard.placeShip(ship, 3, 3, 1, 0)).toBe(false);
+		expect(gameBoard.placeShip(ship, 3, 3, { dx: 1, dy: 0 })).toBe(false);
 
 		// Diagonal
-		expect(gameBoard.placeShip(ship, 0, 0, 1, 1)).toBe(false);
+		expect(gameBoard.placeShip(ship, 0, 0, { dx: 1, dy: 1 })).toBe(false);
 
 		// Overlapping
 		gameBoard.placeShip(new Ship(2), 0, 0);

@@ -88,7 +88,7 @@ export default class UI {
 			const isHorizontal = shipCoords[0][0] === shipCoords[shipCoords.length - 1][0];
 			const [dx, dy] = isHorizontal ? [0, 1] : [1, 0];
 
-			const success = selfBoard.rePlaceShip(ship, thisX, thisY, dx, dy);
+			const success = selfBoard.rePlaceShip(ship, thisX, thisY, { dx, dy });
 			this.updateBoard(selfBoard.boardSnapshot, selfBoardEl);
 		});
 
@@ -97,7 +97,7 @@ export default class UI {
 			this.#dragged.removeAttribute("draggable");
 			this.#dragged = null;
 		});
-		
+
 	}
 
 	createGhostCell(shipCoords, event) {
