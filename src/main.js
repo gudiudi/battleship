@@ -27,35 +27,6 @@ makeFleet(self);
 const ui = new UI();
 ui.init(selfBoard);
 ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
-ui.bindCellClickHandler(ui.selfBoardEl, (x, y) => handleShipDirection(x, y));
-ui.bindCellDragStartHandler(ui.selfBoardEl, (x, y, e) => handleDragStartEvent(x, y, e));
-
-function handleShipDirection(x, y) {
-	const ship = selfBoard.getShipAtCoordinate(x, y);
-	if (!ship) return;
-
-	const shipCoords = ship.coordinatesSnapshot;
-	const success = selfBoard.changeShipDirection(ship);
-	if (!success) {
-		for (const [x, y] of shipCoords) {
-			const shipPartEl = ui.selfBoardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-			shipPartEl.classList.add("shake");
-			shipPartEl.addEventListener("animationend", () => {
-				shipPartEl.classList.remove("shake");
-			}, { once: true });
-		}
-		return;
-	}
-
-	ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
-}
-
-function handleDragStartEvent(x, y, e) {
-	const ship = selfBoard.getShipAtCoordinate(x, y);
-	if (!ship) return;
-
-	ui.createGhostCell(ship.coordinatesSnapshot, e);
-}
 
 // todo
 /*

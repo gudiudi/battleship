@@ -98,6 +98,20 @@ export default class GameBoard {
 		return cell?.ship || null;
 	}
 
+	getShipDirection(ship) {
+		const coords = ship.coordinatesSnapshot;
+
+		if (coords.length === 1) return GameBoard.#DIRECTIONS.HORIZONTAL;
+
+		const [x1, y1] = coords[0];
+		const [x2, y2] = coords[1];
+
+		if (x1 === x2) return GameBoard.#DIRECTIONS.HORIZONTAL;
+		if (y1 === y2) return GameBoard.#DIRECTIONS.VERTICAL;
+
+		return null;
+	}
+
 	clearBoard() {
 		this.#board = this.#createBoard(this.#size);
 		this.#fleet.clear();
@@ -210,20 +224,6 @@ export default class GameBoard {
 		return false;
 	}
 
-	#getShipDirection(ship) {
-		const coords = ship.coordinatesSnapshot;
-
-		if (coords.length === 1) return GameBoard.#DIRECTIONS.HORIZONTAL;
-
-		const [x1, y1] = coords[0];
-		const [x2, y2] = coords[1];
-
-		if (x1 === x2) return GameBoard.#DIRECTIONS.HORIZONTAL;
-		if (y1 === y2) return GameBoard.#DIRECTIONS.VERTICAL;
-
-		return null;
-	}
-
 	#getOppositeDirection(direction) {
 		const { HORIZONTAL, VERTICAL } = GameBoard.#DIRECTIONS;
 
@@ -237,7 +237,7 @@ export default class GameBoard {
 		if (!coords || coords.length === 0) return null;
 
 		const [x, y] = coords[0];
-		const direction = this.#getShipDirection(ship);
+		const direction = this.getShipDirection(ship);
 
 		return [x, y, direction];
 	}
