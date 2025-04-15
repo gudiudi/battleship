@@ -2,9 +2,11 @@ export default class UI {
 	#appEl;
 	#selfBoardEl;
 	#opponentBoardEl;
+	#dragged;
 
 	constructor() {
 		this.#appEl = document.getElementById("app");
+		this.#dragged;
 	}
 
 	init(size = 10) {
@@ -23,6 +25,7 @@ export default class UI {
 				if (cell?.hit) {
 					cellEl.classList.add(cell.ship ? "hit" : "miss");
 				} else if (!hideShips && cell?.ship) {
+					cellEl.setAttribute("draggable", "true");
 					cellEl.classList.add("ship");
 				}
 			}
@@ -39,6 +42,44 @@ export default class UI {
 
 			handler(x, y);
 		});
+	}
+
+	bindDragAndDropHandlers(boardEl, fleetSnapshot) {
+		for (const ship of fleetSnapshot) {
+			for (const [x, y] of ship.coordinatesSnapshot) {
+				const shipEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+				console.log(shipEl);
+				this.#dragstart(shipEl, ship.coordinatesSnapshot);
+			}
+		}
+	}
+
+	#dragstart(shipEl, shipCoords) {
+		shipEl.addEventListener("dragstart", (event) => {
+			this.#createGhostCell(shipCoords, event);
+
+			this.#dragged = event.target;
+			event.target.classList.add("dragging");
+		});
+	}
+
+	#createGhostCell(shipCoords, event) {
+		const isHorizontal = shipCoords[0][0] === shipCoords[shipCoords.length - 1][0];
+		const cellSize = 2;
+
+		const ghost = document.createElement("div");
+		ghost.style.width = isHorizontal ? `${cellSize * shipCoords.length}em` : `${cellSize}em`;
+		ghost.style.height = isHorizontal ? `${cellSize}em` : `${cellSize * shipCoords.length}em`;
+		ghost.style.position = "absolute";
+		ghost.style.outline = "2px solid #0065d8";
+		ghost.style.border = "2px solid #0065d8";
+		ghost.style.pointerEvents = "none";
+		ghost.style.top = "-1000px";
+		ghost.style.left = "-1000px";
+
+		document.body.appendChild(ghost);
+		event.dataTransfer.setDragImage(ghost, 0, 0);
+		setTimeout(() => document.body.removeChild(ghost), 0);
 	}
 
 	#createGrid(boardContainer, size) {

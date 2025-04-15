@@ -28,6 +28,7 @@ const self = new Player(selfBoard);
 makeFleet(self);
 ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
 ui.bindCellClickHandler(ui.selfBoardEl, (x, y) => handleShipDirection(x, y));
+ui.bindDragAndDropHandlers(ui.selfBoardEl, selfBoard.fleetSnapshot);
 
 function handleShipDirection(x, y) {
 	const ship = selfBoard.getShipAtCoordinate(x, y);
@@ -38,6 +39,12 @@ function handleShipDirection(x, y) {
 
 	ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
 }
+
+// todo
+/*
+gamecontroller
+draggable
+*/
 
 /*
 const opponentBoard = new GameBoard();
