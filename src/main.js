@@ -20,15 +20,15 @@ const makeFleet = (participant) => {
 	}
 };
 
-const ui = new UI();
-ui.init();
-
 const selfBoard = new GameBoard();
 const self = new Player(selfBoard);
 makeFleet(self);
+
+const ui = new UI();
+ui.init(selfBoard);
 ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
 ui.bindCellClickHandler(ui.selfBoardEl, (x, y) => handleShipDirection(x, y));
-ui.bindDragAndDropHandlers(ui.selfBoardEl, selfBoard.fleetSnapshot);
+ui.bindCellDragStartHandler(ui.selfBoardEl, (x, y, e) => handleDragStartEvent(x, y, e));
 
 function handleShipDirection(x, y) {
 	const ship = selfBoard.getShipAtCoordinate(x, y);
@@ -38,6 +38,13 @@ function handleShipDirection(x, y) {
 	if (!success) return;
 
 	ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
+}
+
+function handleDragStartEvent(x, y, e) {
+	const ship = selfBoard.getShipAtCoordinate(x, y);
+	if (!ship) return;
+
+	ui.createGhostCell(ship.coordinatesSnapshot, e);
 }
 
 // todo

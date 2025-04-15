@@ -9,11 +9,12 @@ export default class UI {
 		this.#dragged;
 	}
 
-	init(size = 10) {
+	init(selfBoard, size = 10) {
 		this.#selfBoardEl = this.#createBoardContainer("self");
 		this.#opponentBoardEl = this.#createBoardContainer("opponent", true);
 		this.#createGrid(this.#selfBoardEl, size);
 		this.#createGrid(this.#opponentBoardEl, size);
+		this.#setupDropTargetListener(this.#selfBoardEl, selfBoard);
 	}
 
 	updateBoard(gameBoard, boardEl, hideShips = false) {
@@ -25,8 +26,8 @@ export default class UI {
 				if (cell?.hit) {
 					cellEl.classList.add(cell.ship ? "hit" : "miss");
 				} else if (!hideShips && cell?.ship) {
-					cellEl.setAttribute("draggable", "true");
 					cellEl.classList.add("ship");
+					cellEl.setAttribute("draggable", "true");
 				}
 			}
 		}
@@ -44,26 +45,62 @@ export default class UI {
 		});
 	}
 
-	bindDragAndDropHandlers(boardEl, fleetSnapshot) {
-		for (const ship of fleetSnapshot) {
-			for (const [x, y] of ship.coordinatesSnapshot) {
-				const shipEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-				console.log(shipEl);
-				this.#dragstart(shipEl, ship.coordinatesSnapshot);
-			}
-		}
-	}
+	bindCellDragStartHandler(boardEl, handler) {
+		boardEl.addEventListener("dragstart", (e) => {
+			const shipEl = e.target.closest(".ship");
+			if (!shipEl) return;
 
-	#dragstart(shipEl, shipCoords) {
-		shipEl.addEventListener("dragstart", (event) => {
-			this.#createGhostCell(shipCoords, event);
+			const x = Number.parseInt(shipEl.dataset.x, 10);
+			const y = Number.parseInt(shipEl.dataset.y, 10);
 
-			this.#dragged = event.target;
-			event.target.classList.add("dragging");
+			this.#dragged = shipEl;
+			e.dataTransfer.setData("text/plain", JSON.stringify({ draggedX: x, draggedY: y }));
+
+			//shipEl.classList.remove("ship");
+
+			handler(x, y, e);
 		});
 	}
 
-	#createGhostCell(shipCoords, event) {
+	#setupDropTargetListener(selfBoardEl, selfBoard) {
+		selfBoardEl.addEventListener("dragenter", (e) => {
+			const cellEl = e.target.closest(".cell");
+			if (!cellEl) return;
+			e.preventDefault();
+		});
+
+		selfBoardEl.addEventListener("dragover", (e) => {
+			const cellEl = e.target.closest(".cell");
+			if (!cellEl) return;
+			e.preventDefault();
+		});
+
+		selfBoardEl.addEventListener("drop", (e) => {
+			const cellEl = e.target.closest(".cell");
+			if (!cellEl) return;
+			e.preventDefault();
+
+			const { draggedX, draggedY } = JSON.parse(e.dataTransfer.getData("text/plain"));
+			const ship = selfBoard.getShipAtCoordinate(draggedX, draggedY);
+			const shipCoords = ship.coordinatesSnapshot;
+			const thisX = Number.parseInt(cellEl.dataset.x, 10);
+			const thisY = Number.parseInt(cellEl.dataset.y, 10);
+			const isHorizontal = shipCoords[0][0] === shipCoords[shipCoords.length - 1][0];
+			const [dx, dy] = isHorizontal ? [0, 1] : [1, 0];
+
+			const success = selfBoard.rePlaceShip(ship, thisX, thisY, dx, dy);
+			this.updateBoard(selfBoard.boardSnapshot, selfBoardEl);
+		});
+
+		selfBoardEl.addEventListener("dragend", () => {
+			if (!this.#dragged) return;
+			this.#dragged.removeAttribute("draggable");
+			this.#dragged = null;
+		});
+		
+	}
+
+	createGhostCell(shipCoords, event) {
 		const isHorizontal = shipCoords[0][0] === shipCoords[shipCoords.length - 1][0];
 		const cellSize = 2;
 
