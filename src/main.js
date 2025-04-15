@@ -34,9 +34,18 @@ function handleShipDirection(x, y) {
 	const ship = selfBoard.getShipAtCoordinate(x, y);
 	if (!ship) return;
 
-
+	const shipCoords = ship.coordinatesSnapshot;
 	const success = selfBoard.changeShipDirection(ship);
-	if (!success) return;
+	if (!success) {
+		for (const [x, y] of shipCoords) {
+			const shipPartEl = ui.selfBoardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+			shipPartEl.classList.add("shake");
+			shipPartEl.addEventListener("animationend", () => {
+				shipPartEl.classList.remove("shake");
+			}, { once: true });
+		}
+		return;
+	}
 
 	ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
 }

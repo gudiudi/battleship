@@ -54,7 +54,6 @@ export default class UI {
 			const y = Number.parseInt(shipEl.dataset.y, 10);
 
 			this.#dragged = shipEl;
-			e.dataTransfer.setData("text/plain", JSON.stringify({ draggedX: x, draggedY: y }));
 
 			//shipEl.classList.remove("ship");
 
@@ -80,7 +79,8 @@ export default class UI {
 			if (!cellEl) return;
 			e.preventDefault();
 
-			const { draggedX, draggedY } = JSON.parse(e.dataTransfer.getData("text/plain"));
+			const draggedX = Number.parseInt(this.#dragged.dataset.x, 10);
+			const draggedY = Number.parseInt(this.#dragged.dataset.y, 10);
 			const ship = selfBoard.getShipAtCoordinate(draggedX, draggedY);
 			const shipCoords = ship.coordinatesSnapshot;
 			const thisX = Number.parseInt(cellEl.dataset.x, 10);
@@ -89,15 +89,21 @@ export default class UI {
 			const [dx, dy] = isHorizontal ? [0, 1] : [1, 0];
 
 			const success = selfBoard.rePlaceShip(ship, thisX, thisY, { dx, dy });
-			this.updateBoard(selfBoard.boardSnapshot, selfBoardEl);
-		});
+			if (!success) {
+				for (const [x, y] of shipCoords) {
+					const shipPartEl = selfBoardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+					shipPartEl.classList.add("shake");
+					shipPartEl.addEventListener("animationend", () => {
+						shipPartEl.classList.remove("shake");
+					}, { once: true });
+				}
+				return;
+			}
 
-		selfBoardEl.addEventListener("dragend", () => {
-			if (!this.#dragged) return;
 			this.#dragged.removeAttribute("draggable");
 			this.#dragged = null;
+			this.updateBoard(selfBoard.boardSnapshot, selfBoardEl);
 		});
-
 	}
 
 	createGhostCell(shipCoords, event) {
