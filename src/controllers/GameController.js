@@ -59,8 +59,11 @@ export default class GameController {
 		const ship = this.#self.getShipAtCoordinate(x, y);
 		if (!ship) return;
 
-		this.#attemptChangeShipDirection(ship);
-		this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
+		if (this.#started) {
+			// and player's turn
+			this.#attemptChangeShipDirection(ship);
+			this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
+		} // else opponent's turn TODO
 	};
 
 	#attemptChangeShipDirection(ship) {
@@ -70,6 +73,7 @@ export default class GameController {
 	}
 
 	#handleDragStart = ({ x, y, e }) => {
+		if (this.#started) return;
 		const ship = this.#self.getShipAtCoordinate(x, y);
 		if (!ship) return;
 
@@ -80,6 +84,7 @@ export default class GameController {
 	};
 
 	#handleDrop = ({ draggedX, draggedY, targetX, targetY }) => {
+		if (this.#started) return;
 		const ship = this.#self.getShipAtCoordinate(draggedX, draggedY);
 		if (!ship) return;
 
