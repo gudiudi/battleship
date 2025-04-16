@@ -38,18 +38,18 @@ export default class GameController {
 	}
 
 	#setupSubscribers() {
-		this.#emitter.subscribe("cellClick", this.#handleCellClick.bind(this));
-		this.#emitter.subscribe("dragStart", this.#handleDragStart.bind(this));
-		this.#emitter.subscribe("drop", this.#handleDrop.bind(this));
+		this.#emitter.subscribe("cellClick", this.#handleCellClick);
+		this.#emitter.subscribe("dragStart", this.#handleDragStart);
+		this.#emitter.subscribe("drop", this.#handleDrop);
 	}
 
-	#handleCellClick({ x, y }) {
+	#handleCellClick = ({ x, y }) => {
 		const ship = this.#self.getShipAtCoordinate(x, y);
 		if (!ship) return;
 
 		this.#attemptChangeShipDirection(ship);
 		this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
-	}
+	};
 
 	#attemptChangeShipDirection(ship) {
 		const success = this.#self.changeShipDirection(ship);
@@ -57,7 +57,7 @@ export default class GameController {
 		return success;
 	}
 
-	#handleDragStart({ x, y, e }) {
+	#handleDragStart = ({ x, y, e }) => {
 		const ship = this.#self.getShipAtCoordinate(x, y);
 		if (!ship) return;
 
@@ -65,9 +65,9 @@ export default class GameController {
 			coordinates: ship.coordinatesSnapshot,
 			e,
 		});
-	}
+	};
 
-	#handleDrop({ draggedX, draggedY, targetX, targetY }) {
+	#handleDrop = ({ draggedX, draggedY, targetX, targetY }) => {
 		const ship = this.#self.getShipAtCoordinate(draggedX, draggedY);
 		if (!ship) return;
 
@@ -84,5 +84,5 @@ export default class GameController {
 		}
 		this.#emitter.publish("resetDraggedElement", this.#self.boardSnapshot);
 		this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
-	}
+	};
 }
