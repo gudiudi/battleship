@@ -67,12 +67,17 @@ export default class GameController {
 		});
 	}
 
-	#handleDrop({ draggedX, draggedY, thisX, thisY }) {
+	#handleDrop({ draggedX, draggedY, targetX, targetY }) {
 		const ship = this.#self.getShipAtCoordinate(draggedX, draggedY);
 		if (!ship) return;
 
-		const thisDirection = this.#self.getShipDirection(ship);
-		const success = this.#self.rePlaceShip(ship, thisX, thisY, thisDirection);
+		const targetDirection = this.#self.getShipDirection(ship);
+		const success = this.#self.rePlaceShip(
+			ship,
+			targetX,
+			targetY,
+			targetDirection,
+		);
 		if (!success) {
 			this.#emitter.publish("shakeShip", ship.coordinatesSnapshot);
 			return;
