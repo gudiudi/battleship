@@ -1,27 +1,45 @@
 export default class UI {
+	#emitter;
 	#appEl;
 	#selfBoardEl;
 	#opponentBoardEl;
 	#dragged = null;
 
-	constructor() {
+	constructor(emitter) {
 		this.#appEl = document.getElementById("app");
+		this.#emitter = emitter;
 	}
 
-	init(selfBoard, size = 10) {
+	init(size = 10) {
 		this.#selfBoardEl = this.#createBoardContainer("self");
 		this.#opponentBoardEl = this.#createBoardContainer("opponent", true);
 		this.#createGrid(this.#selfBoardEl, size);
 		this.#createGrid(this.#opponentBoardEl, size);
-		this.#setupClickListener(this.#selfBoardEl, selfBoard);
-		this.#setupDragStartListener(this.#selfBoardEl, selfBoard);
-		this.#setupDropTargetListener(this.#selfBoardEl, selfBoard);
+		this.#setupClickListener();
+		this.#setupDragStartListener();
+		this.#setupDropTargetListener();
+
+		this.#emitter.subscribe("updateSelfBoard", this.updateSelfBoard.bind(this));
+		this.#emitter.subscribe("shakeShip", this.#triggerShakeEffect.bind(this));
+		this.#emitter.subscribe("ghostCell", this.#createGhostCell);
+		this.#emitter.subscribe(
+			"resetDraggedElement",
+			this.#resetDraggedElement.bind(this),
+		);
 	}
 
-	updateBoard(gameBoard, boardEl, hideShips = false) {
+	updateSelfBoard(selfBoardSnapshot) {
+		this.#updateBoard(selfBoardSnapshot, this.#selfBoardEl);
+	}
+
+	updateOpponentBoard(selfBoardSnapshot) {
+		this.#updateBoard(selfBoardSnapshot, this.#opponentBoardEl);
+	}
+
+	#updateBoard(boardSnapshot, boardEl, hideShips = false) {
 		this.#clearCellsState(boardEl);
 
-		for (const [x, row] of gameBoard.entries()) {
+		for (const [x, row] of boardSnapshot.entries()) {
 			for (const [y, cell] of row.entries()) {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
 				if (cell?.hit) {
@@ -34,29 +52,20 @@ export default class UI {
 		}
 	}
 
-	#setupClickListener(selfBoardEl, selfBoard) {
-		selfBoardEl.addEventListener("click", (e) => {
-			const cell = e.target.closest(".cell");
-			if (!cell) return;
+	#setupClickListener() {
+		this.#selfBoardEl.addEventListener("click", (e) => {
+			const cellEl = e.target.closest(".cell");
+			if (!cellEl) return;
 
-			const x = Number.parseInt(cell.dataset.x, 10);
-			const y = Number.parseInt(cell.dataset.y, 10);
+			const x = Number.parseInt(cellEl.dataset.x, 10);
+			const y = Number.parseInt(cellEl.dataset.y, 10);
 
-			const ship = selfBoard.getShipAtCoordinate(x, y);
-			if (ship) this.#attemptChangeDirection(ship, selfBoard);
-
-			this.updateBoard(selfBoard.boardSnapshot, selfBoardEl);
+			this.#emitter.publish("cellClick", { x, y });
 		});
 	}
 
-	#attemptChangeDirection(ship, selfBoard) {
-		const success = selfBoard.changeShipDirection(ship);
-		if (!success) this.#triggerShakeEffect(ship.coordinatesSnapshot);
-		return success;
-	}
-
-	#setupDragStartListener(selfBoardEl, selfBoard) {
-		selfBoardEl.addEventListener("dragstart", (e) => {
+	#setupDragStartListener() {
+		this.#selfBoardEl.addEventListener("dragstart", (e) => {
 			const shipEl = e.target.closest(".ship");
 			if (!shipEl) return;
 
@@ -65,43 +74,45 @@ export default class UI {
 
 			this.#dragged = shipEl;
 
-			const ship = selfBoard.getShipAtCoordinate(x, y);
-			this.#createGhostCell(ship.coordinatesSnapshot, e);
+			this.#emitter.publish("dragStart", { x, y, e });
 		});
 	}
 
-	#setupDropTargetListener(selfBoardEl, selfBoard) {
-		selfBoardEl.addEventListener("dragenter", this.#preventDefault);
-		selfBoardEl.addEventListener("dragover", this.#preventDefault);
+	#setupDropTargetListener() {
+		this.#selfBoardEl.addEventListener("dragenter", this.#preventDefault);
+		this.#selfBoardEl.addEventListener("dragover", this.#preventDefault);
 
-		selfBoardEl.addEventListener("drop", (e) => {
+		this.#selfBoardEl.addEventListener("drop", (e) => {
 			const cellEl = e.target.closest(".cell");
 			if (!cellEl) return;
 			e.preventDefault();
 
 			const draggedX = Number.parseInt(this.#dragged.dataset.x, 10);
 			const draggedY = Number.parseInt(this.#dragged.dataset.y, 10);
-			const ship = selfBoard.getShipAtCoordinate(draggedX, draggedY);
-			const success = this.#handleDrop(cellEl, ship, selfBoard);
+			const thisX = Number.parseInt(cellEl.dataset.x, 10);
+			const thisY = Number.parseInt(cellEl.dataset.y, 10);
 
-			if (!success) {
-				this.#triggerShakeEffect(ship.coordinatesSnapshot);
-				return;
-			}
-
-			this.#dragged.removeAttribute("draggable");
-			this.#dragged = null;
-			this.updateBoard(selfBoard.boardSnapshot, selfBoardEl);
+			this.#emitter.publish("drop", { draggedX, draggedY, thisX, thisY });
 		});
 	}
 
-	#createGhostCell(shipCoords, event) {
-		const isHorizontal = shipCoords[0][0] === shipCoords[shipCoords.length - 1][0];
+	#resetDraggedElement() {
+		this.#dragged.removeAttribute("draggable");
+		this.#dragged = null;
+	}
+
+	#createGhostCell({ coordinates, e }) {
+		const isHorizontal =
+			coordinates[0][0] === coordinates[coordinates.length - 1][0];
 		const cellSize = 2;
 
 		const ghost = document.createElement("div");
-		ghost.style.width = isHorizontal ? `${cellSize * shipCoords.length}em` : `${cellSize}em`;
-		ghost.style.height = isHorizontal ? `${cellSize}em` : `${cellSize * shipCoords.length}em`;
+		ghost.style.width = isHorizontal
+			? `${cellSize * coordinates.length}em`
+			: `${cellSize}em`;
+		ghost.style.height = isHorizontal
+			? `${cellSize}em`
+			: `${cellSize * coordinates.length}em`;
 		ghost.style.position = "absolute";
 		ghost.style.outline = "2px solid #0065d8";
 		ghost.style.border = "2px solid #0065d8";
@@ -110,7 +121,7 @@ export default class UI {
 		ghost.style.left = "-1000px";
 
 		document.body.appendChild(ghost);
-		event.dataTransfer.setDragImage(ghost, 0, 0);
+		e.dataTransfer.setDragImage(ghost, 0, 0);
 		setTimeout(() => document.body.removeChild(ghost), 0);
 	}
 
@@ -146,11 +157,17 @@ export default class UI {
 
 	#triggerShakeEffect(shipCoords) {
 		for (const [x, y] of shipCoords) {
-			const shipPartEl = this.#selfBoardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+			const shipPartEl = this.#selfBoardEl.querySelector(
+				`[data-x="${x}"][data-y="${y}"]`,
+			);
 			shipPartEl.classList.add("shake");
-			shipPartEl.addEventListener("animationend", () => {
-				shipPartEl.classList.remove("shake");
-			}, { once: true });
+			shipPartEl.addEventListener(
+				"animationend",
+				() => {
+					shipPartEl.classList.remove("shake");
+				},
+				{ once: true },
+			);
 		}
 	}
 
@@ -158,14 +175,6 @@ export default class UI {
 		const cellEl = e.target.closest(".cell");
 		if (!cellEl) return;
 		e.preventDefault();
-	}
-
-	#handleDrop(cellEl, ship, selfBoard) {
-		const thisX = Number.parseInt(cellEl.dataset.x, 10);
-		const thisY = Number.parseInt(cellEl.dataset.y, 10);
-		const thisDirection = selfBoard.getShipDirection(ship);
-
-		return selfBoard.rePlaceShip(ship, thisX, thisY, thisDirection);
 	}
 
 	get selfBoardEl() {

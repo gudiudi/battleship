@@ -16,12 +16,7 @@ export default class GameBoard {
 		this.#sunkShipsCount = 0;
 	}
 
-	placeShip(
-		ship,
-		x,
-		y,
-		direction = GameBoard.#DIRECTIONS.HORIZONTAL,
-	) {
+	placeShip(ship, x, y, direction = GameBoard.#DIRECTIONS.HORIZONTAL) {
 		if (!this.#canPlaceShip(ship, x, y, direction)) return false;
 
 		this.#placeShipOnBoard(ship, x, y, direction);
@@ -33,7 +28,8 @@ export default class GameBoard {
 	rePlaceShip(ship, newX, newY, newDirection) {
 		if (!this.#fleet.has(ship)) return false;
 
-		const [previousX, previousY, previousDirection] = this.#captureShipState(ship);
+		const [previousX, previousY, previousDirection] =
+			this.#captureShipState(ship);
 
 		const directionToUse = newDirection || previousDirection;
 
@@ -49,11 +45,11 @@ export default class GameBoard {
 		return true;
 	}
 
-
 	changeShipDirection(ship) {
 		if (!this.#fleet.has(ship) || ship.length < 2) return false;
 
-		const [previousX, previousY, previousDirection] = this.#captureShipState(ship);
+		const [previousX, previousY, previousDirection] =
+			this.#captureShipState(ship);
 
 		const newDirection = this.#getOppositeDirection(previousDirection);
 
@@ -151,7 +147,8 @@ export default class GameBoard {
 
 		const finalX = x + direction.dx * (ship.length - 1);
 		const finalY = y + direction.dy * (ship.length - 1);
-		if (this.#isOutOfBounds(x, y) || this.#isOutOfBounds(finalX, finalY)) return false;
+		if (this.#isOutOfBounds(x, y) || this.#isOutOfBounds(finalX, finalY))
+			return false;
 
 		if (!this.#areCellsAvailable(ship, x, y, direction)) return false;
 
@@ -172,7 +169,8 @@ export default class GameBoard {
 		const coords = ship.coordinatesSnapshot;
 		if (!coords || coords.length === 0) return;
 		for (const [x, y] of coords) {
-			if (!this.#isOutOfBounds(x, y) && this.#board[x][y]?.ship === ship) this.#board[x][y] = null;
+			if (!this.#isOutOfBounds(x, y) && this.#board[x][y]?.ship === ship)
+				this.#board[x][y] = null;
 		}
 		ship.clearCoordinates();
 		this.#fleet.delete(ship);
@@ -206,9 +204,15 @@ export default class GameBoard {
 
 	#isAdjacentToOtherShip(x, y, excludeShip = null) {
 		const adjacentOffsets = [
-			[-1, -1], [-1, 0], [-1, 1],
-			[0, -1], /*[0,0]*/[0, 1],
-			[1, -1], [1, 0], [1, 1],
+			[-1, -1],
+			[-1, 0],
+			[-1, 1],
+			[0, -1],
+			/*[0,0]*/
+			[0, 1],
+			[1, -1],
+			[1, 0],
+			[1, 1],
 		];
 
 		for (const [offsetX, offsetY] of adjacentOffsets) {

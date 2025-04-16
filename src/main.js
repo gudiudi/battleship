@@ -1,8 +1,10 @@
 import Computer from "./Computer";
+import EventEmitter from "./EventEmitter";
 import GameBoard from "./GameBoard";
+import GameController from "./GameController";
+import GameView from "./GameView";
 import Player from "./Player";
 import Ship from "./Ship";
-import UI from "./UI";
 import "./assets/style.css";
 
 const makeFleet = (participant) => {
@@ -20,25 +22,28 @@ const makeFleet = (participant) => {
 	}
 };
 
+const emitter = new EventEmitter();
+const view = new GameView(emitter);
+
 const selfBoard = new GameBoard();
 const self = new Player(selfBoard);
 makeFleet(self);
 
-const ui = new UI();
-ui.init(selfBoard);
-ui.updateBoard(selfBoard.boardSnapshot, ui.selfBoardEl);
+const opponentBoard = new GameBoard();
+const opponent = new Computer(opponentBoard);
+makeFleet(opponent);
 
-// todo
-/*
-gamecontroller
-draggable
-*/
+const gameController = new GameController(self, opponent, emitter);
+gameController.init();
+
+view.init();
+view.updateSelfBoard(selfBoard.boardSnapshot);
 
 /*
 const opponentBoard = new GameBoard();
 const opponent = new Computer(opponentBoard);
 makeFleet(opponent);
-ui.updateBoard(opponentBoard.boardSnapshot, ui.opponentBoardEl, true);
+ui.updateBoard(opponentBoard.boardSnapshot, ui.opponentBoardEl, false);
 ui.bindCellClickHandler(ui.opponentBoardEl, (x, y) => {
 	const success = self.makeAttack(opponent, x, y);
 	if (success) {

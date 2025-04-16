@@ -22,8 +22,24 @@ export default class Participant {
 		return placed;
 	}
 
+	rePlaceShip(ship, newX, newY, newDirection) {
+		return this.#gameBoard.rePlaceShip(ship, newX, newY, newDirection);
+	}
+
 	receiveAttack(x, y) {
 		return this.#gameBoard.receiveAttack(x, y);
+	}
+
+	getShipAtCoordinate(x, y) {
+		return this.#gameBoard.getShipAtCoordinate(x, y);
+	}
+
+	getShipDirection(ship) {
+		return this.#gameBoard.getShipDirection(ship);
+	}
+
+	changeShipDirection(ship) {
+		return this.#gameBoard.changeShipDirection(ship);
 	}
 
 	get boardSnapshot() {
