@@ -6,6 +6,7 @@ export default class GameController {
 	#view;
 	#emitter;
 	#started = false;
+	#turn = null;
 
 	constructor(self, opponent, view, emitter) {
 		this.#self = self;
@@ -30,6 +31,7 @@ export default class GameController {
 		this.#emitter.unsubscribe("dragStart", this.#handleDragStart);
 		this.#emitter.unsubscribe("drop", this.#handleDrop);
 		this.#emitter.publish("clearDraggableAttr");
+		this.#emitter.publish("disableDragAndDropListeners");
 		this.#started = true;
 	};
 
@@ -59,11 +61,12 @@ export default class GameController {
 		const ship = this.#self.getShipAtCoordinate(x, y);
 		if (!ship) return;
 
-		if (this.#started) {
-			// and player's turn
+		// pre-game phase
+		if (!this.#started && !this.#turn) {
 			this.#attemptChangeShipDirection(ship);
 			this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
-		} // else opponent's turn TODO
+		}
+		// else opponent's turn and player TODO
 	};
 
 	#attemptChangeShipDirection(ship) {

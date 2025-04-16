@@ -37,6 +37,10 @@ export default class GameView {
 		this.#emitter.subscribe("ghostCell", this.#createGhostCell);
 		this.#emitter.subscribe("resetDraggedElement", this.#resetDraggedElement);
 		this.#emitter.subscribe("clearDraggableAttr", this.#clearDraggableAttr);
+		this.#emitter.subscribe(
+			"disableDragAndDropListeners",
+			this.#disableDragAndDropListeners,
+		);
 	}
 
 	#updateBoard(snapshot, boardEl, hideShips = false) {
@@ -62,6 +66,13 @@ export default class GameView {
 		this.#selfBoardEl.addEventListener("drop", this.#handleDrop);
 	}
 
+	#disableDragAndDropListeners = () => {
+		this.#selfBoardEl.addEventListener("dragstart", this.#preventDefault);
+		this.#selfBoardEl.addEventListener("dragenter", this.#preventDefault);
+		this.#selfBoardEl.addEventListener("dragover", this.#preventDefault);
+		this.#selfBoardEl.addEventListener("drop", this.#preventDefault);
+	};
+
 	#handleCellClick = (e) => {
 		const cellEl = e.target.closest(".cell");
 		if (!cellEl) return;
@@ -72,7 +83,7 @@ export default class GameView {
 
 	#handleDragStart = (e) => {
 		const shipEl = e.target.closest(".ship");
-		if (!shipEl || !this.#selfBoardEl.classList.contains("active")) {
+		if (!shipEl) {
 			e.preventDefault();
 			return;
 		}
