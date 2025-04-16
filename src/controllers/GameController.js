@@ -21,7 +21,7 @@ export default class GameController {
 		this.#view.updateSelfBoard(this.#self.boardSnapshot);
 		this.#view.updateOpponentBoard(this.#opponent.boardSnapshot);
 		this.#setupSubscribers();
-		//this.#startGame();
+		this.#startGame();
 	}
 
 	#startGame = () => {

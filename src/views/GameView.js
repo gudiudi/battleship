@@ -72,7 +72,7 @@ export default class GameView {
 
 	#handleDragStart = (e) => {
 		const shipEl = e.target.closest(".ship");
-		if (!shipEl) {
+		if (!shipEl || !this.#selfBoardEl.classList.contains("active")) {
 			e.preventDefault();
 			return;
 		}

@@ -20,6 +20,10 @@ const gameController = new GameController(self, opponent, view, emitter);
 gameController.init();
 
 /*
+todo
+add active class indicating participant turn
+*/
+/*
 const opponentBoard = new GameBoard();
 const opponent = new Computer(opponentBoard);
 makeFleet(opponent);
