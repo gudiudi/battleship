@@ -1,4 +1,4 @@
-export default class UI {
+export default class GameView {
 	#emitter;
 	#appEl;
 	#selfBoardEl;
@@ -15,17 +15,8 @@ export default class UI {
 		this.#opponentBoardEl = this.#createBoardContainer("opponent", true);
 		this.#createGrid(this.#selfBoardEl, size);
 		this.#createGrid(this.#opponentBoardEl, size);
-		this.#setupClickListener();
-		this.#setupDragStartListener();
-		this.#setupDropTargetListener();
-
-		this.#emitter.subscribe("updateSelfBoard", this.updateSelfBoard.bind(this));
-		this.#emitter.subscribe("shakeShip", this.#triggerShakeEffect.bind(this));
-		this.#emitter.subscribe("ghostCell", this.#createGhostCell);
-		this.#emitter.subscribe(
-			"resetDraggedElement",
-			this.#resetDraggedElement.bind(this),
-		);
+		this.#setupListeners();
+		this.#setupSubscribers();
 	}
 
 	updateSelfBoard(selfBoardSnapshot) {
@@ -34,6 +25,22 @@ export default class UI {
 
 	updateOpponentBoard(selfBoardSnapshot) {
 		this.#updateBoard(selfBoardSnapshot, this.#opponentBoardEl);
+	}
+
+	#setupListeners() {
+		this.#setupClickListener();
+		this.#setupDragStartListener();
+		this.#setupDropTargetListener();
+	}
+
+	#setupSubscribers() {
+		this.#emitter.subscribe("updateSelfBoard", this.updateSelfBoard.bind(this));
+		this.#emitter.subscribe("shakeShip", this.#triggerShakeEffect.bind(this));
+		this.#emitter.subscribe("ghostCell", this.#createGhostCell);
+		this.#emitter.subscribe(
+			"resetDraggedElement",
+			this.#resetDraggedElement.bind(this),
+		);
 	}
 
 	#updateBoard(boardSnapshot, boardEl, hideShips = false) {
