@@ -33,6 +33,7 @@ export default class GameController {
 	};
 
 	#switchTurn() {
+		this.#emitter.publish("switchTurn");
 		this.#turn = this.#turn === this.#self ? this.#opponent : this.#self;
 	}
 
@@ -64,7 +65,7 @@ export default class GameController {
 		}
 	}
 
-	#handleCellClick = ({ x, y }) => {
+	#handleCellClick = async ({ x, y }) => {
 		// pre-game phase
 		if (!this.#started && !this.#turn) {
 			const ship = this.#self.getShipAtCoordinate(x, y);
@@ -74,16 +75,50 @@ export default class GameController {
 		}
 
 		// player's turn
-		// TODO: return the ship that have been hit?
 		if (this.#turn === this.#self) {
-			const success = this.#self.makeAttack(this.#opponent, x, y);
-			const win = this.#opponent.areAllShipsSunk;
+			const attack = this.#self.makeAttack(this.#opponent, x, y);
+
 			this.#emitter.publish(
 				"updateOpponentBoard",
 				this.#opponent.boardSnapshot,
 			);
+
+			console.log(attack);
+
+			if (this.#opponent.areAllShipsSunk) return;
+			if (attack.wasAlreadyHit) return;
+			if (!attack.isShip) this.#switchTurn();
 		}
-		// else opponent's turn  TODO
+
+		// opponent's turn
+		if (this.#turn === this.#opponent) {
+			this.#opponentMakeAttack();
+		}
+	};
+
+	#opponentMakeAttack = async () => {
+		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+		await delay(1000);
+
+		const attack = this.#opponent.makeAttack(this.#self);
+		if (!attack) return;
+
+		this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
+
+		if (this.#self.areAllShipsSunk) return;
+
+		// unlikely because we already use unhitted cells on opponent.makeAttack
+		if (attack.wasAlreadyHit) {
+			await this.#opponentMakeAttack();
+			return;
+		}
+
+		if (!attack.isShip) {
+			this.#switchTurn();
+			return;
+		}
+
+		await this.#opponentMakeAttack();
 	};
 
 	#attemptChangeShipDirection(ship) {

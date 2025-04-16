@@ -45,6 +45,7 @@ export default class GameView {
 			resetDraggedElement: this.#resetDraggedElement,
 			clearDraggableAttr: this.#clearDraggableAttr,
 			disableDragAndDropListeners: this.#disableDragAndDropListeners,
+			switchTurn: this.#toggleBoards,
 		};
 
 		for (const [event, handler] of Object.entries(subscriptions)) {
@@ -149,7 +150,6 @@ export default class GameView {
 	}
 
 	#handleGameStart = (e) => {
-		this.#toggleBoards();
 		e.target.remove();
 		this.#emitter.publish("gameStart");
 	};
@@ -164,14 +164,14 @@ export default class GameView {
 		return boardEl;
 	}
 
-	#toggleBoards() {
+	#toggleBoards = () => {
 		const boards = [this.#selfBoardEl, this.#opponentBoardEl];
 		for (const board of boards) {
 			board.classList.contains("disabled")
 				? board.classList.remove("disabled")
 				: board.classList.add("disabled");
 		}
-	}
+	};
 
 	#createGrid(boardEl, size) {
 		const fragment = document.createDocumentFragment();

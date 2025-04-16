@@ -66,15 +66,21 @@ export default class GameBoard {
 	}
 
 	receiveAttack(x, y) {
-		if (this.#isOutOfBounds(x, y)) return false;
+		if (this.#isOutOfBounds(x, y))
+			return { isShip: false, wasAlreadyHit: false };
 
 		const cell = this.#board[x][y];
 
-		if (cell?.hit === true) return false;
+		if (cell?.hit === true) {
+			return {
+				isShip: Boolean(cell?.ship),
+				wasAlreadyHit: true,
+			};
+		}
 
 		if (!cell?.ship) {
 			this.#board[x][y] = { hit: true };
-			return false;
+			return { isShip: false, wasAlreadyHit: false };
 		}
 
 		const ship = cell.ship;
@@ -85,7 +91,7 @@ export default class GameBoard {
 
 		if (!wasSunkBeforeHit && ship.isSunk) this.#sunkShipsCount++;
 
-		return true;
+		return { isShip: true, wasAlreadyHit: false };
 	}
 
 	getShipAtCoordinate(x, y) {

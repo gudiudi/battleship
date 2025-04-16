@@ -47,21 +47,45 @@ describe("GameBoard", () => {
 
 	it("handles attacks correctly", () => {
 		// Missed attack on empty cell
-		expect(gameBoard.receiveAttack(0, 0)).toBe(false);
+		expect(gameBoard.receiveAttack(0, 0)).toEqual({
+			isShip: false,
+			wasAlreadyHit: false,
+		});
+
+		// Second attack on same cell without ship
+		expect(gameBoard.receiveAttack(0, 0)).toEqual({
+			isShip: false,
+			wasAlreadyHit: true,
+		});
 
 		// Place ship and attack
 		gameBoard.placeShip(ship, 1, 1);
-		expect(gameBoard.receiveAttack(1, 1)).toBe(true);
+		expect(gameBoard.receiveAttack(1, 1)).toEqual({
+			isShip: true,
+			wasAlreadyHit: false,
+		});
 
-		// Second attack on same cell should fail
-		expect(gameBoard.receiveAttack(1, 1)).toBe(false);
+		// Second attack on same cell with ship
+		expect(gameBoard.receiveAttack(1, 1)).toEqual({
+			isShip: true,
+			wasAlreadyHit: true,
+		});
 	});
 
-	it("rejects invalid attacks", () => {
-		// Double attack
-		gameBoard.placeShip(ship, 1, 1);
-		gameBoard.receiveAttack(1, 1);
-		expect(gameBoard.receiveAttack(1, 1)).toBe(false);
+	it("handles out-of-bounds and double attacks properly", () => {
+		// Out-of-bounds attack
+		expect(gameBoard.receiveAttack(-1, 99)).toEqual({
+			isShip: false,
+			wasAlreadyHit: false,
+		});
+
+		// Double attack on ship cell
+		gameBoard.placeShip(ship, 2, 2);
+		gameBoard.receiveAttack(2, 2);
+		expect(gameBoard.receiveAttack(2, 2)).toEqual({
+			isShip: true,
+			wasAlreadyHit: true,
+		});
 	});
 
 	it("tracks sunk ships", () => {
