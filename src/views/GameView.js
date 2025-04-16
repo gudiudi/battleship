@@ -142,11 +142,15 @@ export default class GameView {
 		const buttonEl = document.createElement("button");
 		buttonEl.textContent = "Start";
 		buttonEl.className = "start";
-		buttonEl.addEventListener("click", () =>
-			this.#emitter.publish("gameStart"),
-		);
+		buttonEl.addEventListener("click", this.#handleGameStart);
 		this.#opponentBoardEl.parentNode.appendChild(buttonEl);
 	}
+
+	#handleGameStart = (e) => {
+		this.#toggleBoards();
+		e.target.remove();
+		this.#emitter.publish("gameStart");
+	};
 
 	#createBoard(className, disabled = false) {
 		const battlefieldEl = document.createElement("div");
@@ -156,6 +160,15 @@ export default class GameView {
 		battlefieldEl.appendChild(boardEl);
 		this.#appEl.appendChild(battlefieldEl);
 		return boardEl;
+	}
+
+	#toggleBoards() {
+		const boards = [this.#selfBoardEl, this.#opponentBoardEl];
+		for (const board of boards) {
+			board.classList.contains("disabled")
+				? board.classList.remove("disabled")
+				: board.classList.add("disabled");
+		}
 	}
 
 	#createGrid(boardEl, size) {
@@ -208,5 +221,13 @@ export default class GameView {
 
 	#preventDefault(e) {
 		if (e.target.closest(".cell")) e.preventDefault();
+	}
+
+	get selfBoardEl() {
+		return this.#selfBoardEl;
+	}
+
+	get opponentBoardEl() {
+		return this.#opponentBoardEl;
 	}
 }

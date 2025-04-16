@@ -69,8 +69,8 @@ body {
 }
 
 .board.opponent > .cell:hover {
-	outline: 1px solid #0065d8;
-	border: 1px solid #0065d8;
+	outline: 1px solid #000;
+	border: 1px solid #000;
 }
 
 .battlefied_opponent {
