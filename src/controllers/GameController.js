@@ -74,15 +74,14 @@ export default class GameController {
 		}
 
 		// player's turn
+		// TODO: return the ship that have been hit?
 		if (this.#turn === this.#self) {
 			const success = this.#self.makeAttack(this.#opponent, x, y);
-			if (!success) return;
+			const win = this.#opponent.areAllShipsSunk;
 			this.#emitter.publish(
 				"updateOpponentBoard",
 				this.#opponent.boardSnapshot,
 			);
-			const win = this.#opponent.areAllShipsSunk;
-			console.log(win);
 		}
 		// else opponent's turn  TODO
 	};

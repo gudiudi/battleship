@@ -47,7 +47,7 @@ describe("GameBoard", () => {
 
 	it("handles attacks correctly", () => {
 		// Missed attack on empty cell
-		expect(gameBoard.receiveAttack(0, 0)).toBe(true);
+		expect(gameBoard.receiveAttack(0, 0)).toBe(false);
 
 		// Place ship and attack
 		gameBoard.placeShip(ship, 1, 1);

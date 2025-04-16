@@ -74,7 +74,7 @@ export default class GameBoard {
 
 		if (!cell?.ship) {
 			this.#board[x][y] = { hit: true };
-			return true;
+			return false;
 		}
 
 		const ship = cell.ship;
