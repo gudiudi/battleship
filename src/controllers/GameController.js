@@ -29,7 +29,12 @@ export default class GameController {
 		this.#emitter.publish("clearDraggableAttr");
 		this.#emitter.publish("disableDragAndDropListeners");
 		this.#started = true;
+		this.#switchTurn();
 	};
+
+	#switchTurn() {
+		this.#turn = this.#turn === this.#self ? this.#opponent : this.#self;
+	}
 
 	#placeRandomShips(participant) {
 		const fleet = {
@@ -60,15 +65,26 @@ export default class GameController {
 	}
 
 	#handleCellClick = ({ x, y }) => {
-		const ship = this.#self.getShipAtCoordinate(x, y);
-		if (!ship) return;
-
 		// pre-game phase
 		if (!this.#started && !this.#turn) {
+			const ship = this.#self.getShipAtCoordinate(x, y);
+			if (!ship) return;
 			this.#attemptChangeShipDirection(ship);
 			this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
 		}
-		// else opponent's turn and player TODO
+
+		// player's turn
+		if (this.#turn === this.#self) {
+			const success = this.#self.makeAttack(this.#opponent, x, y);
+			if (!success) return;
+			this.#emitter.publish(
+				"updateOpponentBoard",
+				this.#opponent.boardSnapshot,
+			);
+			const win = this.#opponent.areAllShipsSunk;
+			console.log(win);
+		}
+		// else opponent's turn  TODO
 	};
 
 	#attemptChangeShipDirection(ship) {

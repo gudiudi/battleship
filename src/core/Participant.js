@@ -46,6 +46,10 @@ export default class Participant {
 		return this.#gameBoard.changeShipDirection(ship);
 	}
 
+	get areAllShipsSunk() {
+		return this.#gameBoard.areAllShipsSunk;
+	}
+
 	get boardSnapshot() {
 		return this.#gameBoard.boardSnapshot;
 	}

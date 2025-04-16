@@ -64,6 +64,11 @@ body {
 	transform: translate(-50%, -50%);
 }
 
+.cell.hit {
+	outline: 1px solid red;
+	border: 1px solid red;
+}
+
 .board.opponent > .cell {
 	cursor: pointer;
 }

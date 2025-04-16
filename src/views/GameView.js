@@ -32,12 +32,14 @@ export default class GameView {
 
 	#setupListeners() {
 		this.#selfBoardEl.addEventListener("click", this.#handleCellClick);
+		this.#opponentBoardEl.addEventListener("click", this.#handleCellClick);
 		this.#setupDragAndDropListeners();
 	}
 
 	#setupSubscribers() {
 		const subscriptions = {
 			updateSelfBoard: this.updateSelfBoard,
+			updateOpponentBoard: this.updateOpponentBoard,
 			shakeShip: this.#triggerShakeEffect,
 			ghostCell: this.#createGhostCell,
 			resetDraggedElement: this.#resetDraggedElement,
