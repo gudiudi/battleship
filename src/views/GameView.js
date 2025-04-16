@@ -23,8 +23,8 @@ export default class GameView {
 		this.#updateBoard(selfBoardSnapshot, this.#selfBoardEl);
 	}
 
-	updateOpponentBoard(selfBoardSnapshot) {
-		this.#updateBoard(selfBoardSnapshot, this.#opponentBoardEl);
+	updateOpponentBoard(opponentBoardSnapshot) {
+		this.#updateBoard(opponentBoardSnapshot, this.#opponentBoardEl, true);
 	}
 
 	#setupListeners() {

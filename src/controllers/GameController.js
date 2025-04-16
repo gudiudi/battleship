@@ -1,16 +1,40 @@
+import Ship from "../core/Ship";
+
 export default class GameController {
 	#self;
 	#opponent;
+	#view;
 	#emitter;
 
-	constructor(self, opponent, emitter) {
+	constructor(self, opponent, view, emitter) {
 		this.#self = self;
 		this.#opponent = opponent;
 		this.#emitter = emitter;
+		this.#view = view;
 	}
 
 	init() {
+		this.#view.init();
+		this.#placeRandomShips(this.#self);
+		this.#placeRandomShips(this.#opponent);
+		this.#view.updateSelfBoard(this.#self.boardSnapshot);
+		this.#view.updateOpponentBoard(this.#opponent.boardSnapshot);
 		this.#setupSubscribers();
+	}
+
+	#placeRandomShips(participant) {
+		const fleet = {
+			4: 1,
+			3: 2,
+			2: 3,
+			1: 4,
+		};
+
+		for (const [ship, count] of Object.entries(fleet)) {
+			for (let i = 0; i < count; i++) {
+				participant.placeShipAtRandom(new Ship(Number(ship)));
+			}
+		}
 	}
 
 	#setupSubscribers() {
