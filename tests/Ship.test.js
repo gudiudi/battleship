@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import Ship from "../src/Ship";
+import Ship from "../src/core/Ship";
 
 describe("Ship", () => {
 	let ship;

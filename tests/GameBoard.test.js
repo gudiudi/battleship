@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import GameBoard from "../src/GameBoard";
-import Ship from "../src/Ship";
+import GameBoard from "../src/core/GameBoard";
+import Ship from "../src/core/Ship";
 
 describe("GameBoard", () => {
 	let gameBoard;
