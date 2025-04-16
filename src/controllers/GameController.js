@@ -98,7 +98,7 @@ export default class GameController {
 
 	#opponentMakeAttack = async () => {
 		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-		await delay(1000);
+		await delay(500);
 
 		const attack = this.#opponent.makeAttack(this.#self);
 		if (!attack) return;
@@ -109,6 +109,7 @@ export default class GameController {
 
 		// unlikely because we already use unhitted cells on opponent.makeAttack
 		if (attack.wasAlreadyHit) {
+			console.log("attack.wasAlreadyHit");
 			await this.#opponentMakeAttack();
 			return;
 		}

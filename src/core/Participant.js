@@ -46,18 +46,6 @@ export default class Participant {
 		return this.#gameBoard.changeShipDirection(ship);
 	}
 
-	getUnhittedCells() {
-		const cells = [];
-		for (const [x, row] of this.boardSnapshot.entries()) {
-			for (const [y, cell] of row.entries()) {
-				if (!cell || cell.hit === true) continue;
-				cells.push([x, y]);
-			}
-		}
-
-		return cells;
-	}
-
 	get areAllShipsSunk() {
 		return this.#gameBoard.areAllShipsSunk;
 	}
