@@ -22,14 +22,10 @@ export default class GameController {
 		this.#view.updateSelfBoard(this.#self.boardSnapshot);
 		this.#view.updateOpponentBoard(this.#opponent.boardSnapshot);
 		this.#setupSubscribers();
-		this.#startGame();
 	}
 
 	#startGame = () => {
 		this.#emitter.unsubscribe("gameStart", this.#startGame);
-		this.#emitter.unsubscribe("cellClick", this.#handleCellClick);
-		this.#emitter.unsubscribe("dragStart", this.#handleDragStart);
-		this.#emitter.unsubscribe("drop", this.#handleDrop);
 		this.#emitter.publish("clearDraggableAttr");
 		this.#emitter.publish("disableDragAndDropListeners");
 		this.#started = true;
@@ -51,10 +47,16 @@ export default class GameController {
 	}
 
 	#setupSubscribers() {
-		this.#emitter.subscribe("gameStart", this.#startGame);
-		this.#emitter.subscribe("cellClick", this.#handleCellClick);
-		this.#emitter.subscribe("dragStart", this.#handleDragStart);
-		this.#emitter.subscribe("drop", this.#handleDrop);
+		const subscriptions = {
+			gameStart: this.#startGame,
+			cellClick: this.#handleCellClick,
+			dragStart: this.#handleDragStart,
+			drop: this.#handleDrop,
+		};
+
+		for (const [event, handler] of Object.entries(subscriptions)) {
+			this.#emitter.subscribe(event, handler);
+		}
 	}
 
 	#handleCellClick = ({ x, y }) => {

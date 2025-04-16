@@ -11,10 +11,7 @@ export default class GameView {
 	}
 
 	init(size = 10) {
-		this.#selfBoardEl = this.#createBoard("self");
-		this.#opponentBoardEl = this.#createBoard("opponent", true);
-		this.#createGrid(this.#selfBoardEl, size);
-		this.#createGrid(this.#opponentBoardEl, size);
+		this.#createBattlefields(size);
 		this.#createStartButton();
 		this.#setupListeners();
 		this.#setupSubscribers();
@@ -26,21 +23,31 @@ export default class GameView {
 	updateOpponentBoard = (snapshot) =>
 		this.#updateBoard(snapshot, this.#opponentBoardEl, true);
 
+	#createBattlefields(size) {
+		this.#selfBoardEl = this.#createBoard("self");
+		this.#opponentBoardEl = this.#createBoard("opponent", true);
+		this.#createGrid(this.#selfBoardEl, size);
+		this.#createGrid(this.#opponentBoardEl, size);
+	}
+
 	#setupListeners() {
 		this.#selfBoardEl.addEventListener("click", this.#handleCellClick);
 		this.#setupDragAndDropListeners();
 	}
 
 	#setupSubscribers() {
-		this.#emitter.subscribe("updateSelfBoard", this.updateSelfBoard);
-		this.#emitter.subscribe("shakeShip", this.#triggerShakeEffect);
-		this.#emitter.subscribe("ghostCell", this.#createGhostCell);
-		this.#emitter.subscribe("resetDraggedElement", this.#resetDraggedElement);
-		this.#emitter.subscribe("clearDraggableAttr", this.#clearDraggableAttr);
-		this.#emitter.subscribe(
-			"disableDragAndDropListeners",
-			this.#disableDragAndDropListeners,
-		);
+		const subscriptions = {
+			updateSelfBoard: this.updateSelfBoard,
+			shakeShip: this.#triggerShakeEffect,
+			ghostCell: this.#createGhostCell,
+			resetDraggedElement: this.#resetDraggedElement,
+			clearDraggableAttr: this.#clearDraggableAttr,
+			disableDragAndDropListeners: this.#disableDragAndDropListeners,
+		};
+
+		for (const [event, handler] of Object.entries(subscriptions)) {
+			this.#emitter.subscribe(event, handler);
+		}
 	}
 
 	#updateBoard(snapshot, boardEl, hideShips = false) {
@@ -59,18 +66,26 @@ export default class GameView {
 		}
 	}
 
+	#toggleDragAndDropListeners(enable) {
+		const method = enable ? "addEventListener" : "removeEventListener";
+		const handlers = {
+			dragstart: this.#handleDragStart,
+			dragenter: this.#preventDefault,
+			dragover: this.#preventDefault,
+			drop: this.#handleDrop,
+		};
+
+		for (const [event, handler] of Object.entries(handlers)) {
+			this.#selfBoardEl[method](event, handler);
+		}
+	}
+
 	#setupDragAndDropListeners() {
-		this.#selfBoardEl.addEventListener("dragstart", this.#handleDragStart);
-		this.#selfBoardEl.addEventListener("dragenter", this.#preventDefault);
-		this.#selfBoardEl.addEventListener("dragover", this.#preventDefault);
-		this.#selfBoardEl.addEventListener("drop", this.#handleDrop);
+		this.#toggleDragAndDropListeners(true);
 	}
 
 	#disableDragAndDropListeners = () => {
-		this.#selfBoardEl.addEventListener("dragstart", this.#preventDefault);
-		this.#selfBoardEl.addEventListener("dragenter", this.#preventDefault);
-		this.#selfBoardEl.addEventListener("dragover", this.#preventDefault);
-		this.#selfBoardEl.addEventListener("drop", this.#preventDefault);
+		this.#toggleDragAndDropListeners(false);
 	};
 
 	#handleCellClick = (e) => {
@@ -127,6 +142,9 @@ export default class GameView {
 		const buttonEl = document.createElement("button");
 		buttonEl.textContent = "Start";
 		buttonEl.className = "start";
+		buttonEl.addEventListener("click", () =>
+			this.#emitter.publish("gameStart"),
+		);
 		this.#opponentBoardEl.parentNode.appendChild(buttonEl);
 	}
 
