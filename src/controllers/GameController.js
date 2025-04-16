@@ -5,6 +5,7 @@ export default class GameController {
 	#opponent;
 	#view;
 	#emitter;
+	#started = false;
 
 	constructor(self, opponent, view, emitter) {
 		this.#self = self;
@@ -22,6 +23,14 @@ export default class GameController {
 		this.#setupSubscribers();
 	}
 
+	#startGame = () => {
+		this.#emitter.unsubscribe("gameStart", this.#startGame);
+		this.#emitter.unsubscribe("cellClick", this.#handleCellClick);
+		this.#emitter.unsubscribe("dragStart", this.#handleDragStart);
+		this.#emitter.unsubscribe("drop", this.#handleDrop);
+		this.#started = true;
+	};
+
 	#placeRandomShips(participant) {
 		const fleet = {
 			4: 1,
@@ -38,6 +47,7 @@ export default class GameController {
 	}
 
 	#setupSubscribers() {
+		this.#emitter.subscribe("gameStart", this.#startGame);
 		this.#emitter.subscribe("cellClick", this.#handleCellClick);
 		this.#emitter.subscribe("dragStart", this.#handleDragStart);
 		this.#emitter.subscribe("drop", this.#handleDrop);

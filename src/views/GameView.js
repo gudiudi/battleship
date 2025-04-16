@@ -15,6 +15,7 @@ export default class GameView {
 		this.#opponentBoardEl = this.#createBoard("opponent", true);
 		this.#createGrid(this.#selfBoardEl, size);
 		this.#createGrid(this.#opponentBoardEl, size);
+		this.#createStartButton();
 		this.#setupListeners();
 		this.#setupSubscribers();
 	}
@@ -107,10 +108,20 @@ export default class GameView {
 		setTimeout(() => ghost.remove(), 0);
 	}
 
+	#createStartButton() {
+		const buttonEl = document.createElement("button");
+		buttonEl.textContent = "Start";
+		buttonEl.className = "start";
+		this.#opponentBoardEl.parentNode.appendChild(buttonEl);
+	}
+
 	#createBoard(className, disabled = false) {
+		const battlefieldEl = document.createElement("div");
 		const boardEl = document.createElement("div");
+		battlefieldEl.className = `battlefied_${className}`;
 		boardEl.className = `board ${className} ${disabled ? "disabled" : ""}`;
-		this.#appEl.appendChild(boardEl);
+		battlefieldEl.appendChild(boardEl);
+		this.#appEl.appendChild(battlefieldEl);
 		return boardEl;
 	}
 

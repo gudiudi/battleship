@@ -69,6 +69,32 @@ body {
 	border: 1px solid #0065d8;
 }
 
+.battlefied_opponent {
+	position: relative;
+}
+
+.start {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border: none;
+	padding: 8px 20px;
+	background-color: #0065d8;
+	color: #fff;
+	font-size: 20px;
+	cursor: pointer;
+	transition: transform 0.1s ease, background-color 0.2s ease;
+}
+
+.start:hover {
+	background-color: #1874dd;
+}
+
+.start:active {
+	transform: translate(-50%, -50%) scale(0.95);
+}
+
 .ghost {
 	position: absolute;
 	outline: 2px solid #0065d8;
