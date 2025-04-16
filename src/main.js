@@ -1,10 +1,10 @@
-import Computer from "./Computer";
-import EventEmitter from "./EventEmitter";
-import GameBoard from "./GameBoard";
-import GameController from "./GameController";
-import GameView from "./GameView";
-import Player from "./Player";
-import Ship from "./Ship";
+import GameController from "./controllers/GameController";
+import Computer from "./core/Computer";
+import GameBoard from "./core/GameBoard";
+import Player from "./core/Player";
+import Ship from "./core/Ship";
+import EventEmitter from "./utils/EventEmitter";
+import GameView from "./views/GameView";
 import "./assets/style.css";
 
 const makeFleet = (participant) => {
