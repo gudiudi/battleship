@@ -48,6 +48,10 @@ body {
 	border: 1px solid #0065d8;
 }
 
+.cell.ship[draggable="true"] {
+	cursor: pointer;
+}
+
 .cell.miss::after {
 	content: "";
 	width: 6px;

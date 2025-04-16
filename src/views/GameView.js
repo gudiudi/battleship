@@ -36,12 +36,13 @@ export default class GameView {
 		this.#emitter.subscribe("shakeShip", this.#triggerShakeEffect);
 		this.#emitter.subscribe("ghostCell", this.#createGhostCell);
 		this.#emitter.subscribe("resetDraggedElement", this.#resetDraggedElement);
+		this.#emitter.subscribe("clearDraggableAttr", this.#clearDraggableAttr);
 	}
 
-	#updateBoard(boardSnapshot, boardEl, hideShips = false) {
+	#updateBoard(snapshot, boardEl, hideShips = false) {
 		this.#clearBoardState(boardEl);
 
-		for (const [x, row] of boardSnapshot.entries()) {
+		for (const [x, row] of snapshot.entries()) {
 			for (const [y, cell] of row.entries()) {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
 				if (cell?.hit) {
@@ -71,7 +72,10 @@ export default class GameView {
 
 	#handleDragStart = (e) => {
 		const shipEl = e.target.closest(".ship");
-		if (!shipEl) return;
+		if (!shipEl) {
+			e.preventDefault();
+			return;
+		}
 
 		this.#dragged = shipEl;
 
@@ -147,6 +151,12 @@ export default class GameView {
 			cell.removeAttribute("draggable");
 		}
 	}
+
+	#clearDraggableAttr = () => {
+		for (const cell of this.#selfBoardEl.querySelectorAll(".cell")) {
+			cell.removeAttribute("draggable");
+		}
+	};
 
 	#triggerShakeEffect = (coordinates) => {
 		for (const [x, y] of coordinates) {

@@ -21,6 +21,7 @@ export default class GameController {
 		this.#view.updateSelfBoard(this.#self.boardSnapshot);
 		this.#view.updateOpponentBoard(this.#opponent.boardSnapshot);
 		this.#setupSubscribers();
+		//this.#startGame();
 	}
 
 	#startGame = () => {
@@ -28,6 +29,7 @@ export default class GameController {
 		this.#emitter.unsubscribe("cellClick", this.#handleCellClick);
 		this.#emitter.unsubscribe("dragStart", this.#handleDragStart);
 		this.#emitter.unsubscribe("drop", this.#handleDrop);
+		this.#emitter.publish("clearDraggableAttr");
 		this.#started = true;
 	};
 
