@@ -46,6 +46,7 @@ export default class GameView {
 			clearDraggableAttr: this.#clearDraggableAttr,
 			disableDragAndDropListeners: this.#disableDragAndDropListeners,
 			switchTurn: this.#toggleBoards,
+			gameOver: this.#gameOver,
 		};
 
 		for (const [event, handler] of Object.entries(subscriptions)) {
@@ -61,11 +62,9 @@ export default class GameView {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
 				if (cell?.hit) {
 					cellEl.classList.add(cell.ship ? "hit" : "miss");
-				}
-
-				if (!hideShips && cell?.ship) {
+				} else if (!hideShips && cell?.ship) {
 					cellEl.classList.add("ship");
-					cellEl.draggable = true; // this will re-add the drag effect... should we remove it?
+					cellEl.draggable = true;
 				}
 			}
 		}
@@ -174,6 +173,20 @@ export default class GameView {
 				? board.classList.remove("disabled")
 				: board.classList.add("disabled");
 		}
+	};
+
+	#gameOver = (winner) => {
+		const boards = [this.#selfBoardEl, this.#opponentBoardEl];
+		for (const board of boards) {
+			board.classList.add("disabled");
+		}
+
+		const messages = {
+			self: "You win!",
+			opponent: "You lost!",
+		};
+
+		console.log(messages[winner]);
 	};
 
 	#createGrid(boardEl, size) {

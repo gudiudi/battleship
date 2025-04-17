@@ -6,6 +6,7 @@ export default class GameController {
 	#view;
 	#emitter;
 	#started = false;
+	#over = false;
 	#turn = null;
 
 	constructor(self, opponent, view, emitter) {
@@ -31,6 +32,12 @@ export default class GameController {
 		this.#started = true;
 		this.#switchTurn();
 	};
+
+	#gameOver() {
+		const winner = this.#turn === this.#self ? "self" : "opponent";
+		this.#emitter.publish("gameOver", winner);
+		this.#over = true;
+	}
 
 	#switchTurn() {
 		this.#emitter.publish("switchTurn");
@@ -66,6 +73,8 @@ export default class GameController {
 	}
 
 	#handleCellClick = async ({ x, y }) => {
+		if (this.#over) return;
+
 		// pre-game phase
 		if (!this.#started && !this.#turn) {
 			const ship = this.#self.getShipAtCoordinate(x, y);
@@ -83,7 +92,10 @@ export default class GameController {
 				this.#opponent.boardSnapshot,
 			);
 
-			if (this.#opponent.areAllShipsSunk) return;
+			if (this.#opponent.areAllShipsSunk) {
+				this.#gameOver();
+				return;
+			}
 			if (attack.wasAlreadyHit) return;
 			if (!attack.isShip) this.#switchTurn();
 		}
@@ -103,7 +115,10 @@ export default class GameController {
 
 		this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
 
-		if (this.#self.areAllShipsSunk) return;
+		if (this.#self.areAllShipsSunk) {
+			this.#gameOver();
+			return;
+		}
 
 		// unlikely because we already use unhitted cells on opponent.makeAttack
 		if (attack.wasAlreadyHit) {
