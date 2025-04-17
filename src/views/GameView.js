@@ -61,9 +61,11 @@ export default class GameView {
 				const cellEl = boardEl.querySelector(`[data-x="${x}"][data-y="${y}"]`);
 				if (cell?.hit) {
 					cellEl.classList.add(cell.ship ? "hit" : "miss");
-				} else if (!hideShips && cell?.ship) {
+				}
+
+				if (!hideShips && cell?.ship) {
 					cellEl.classList.add("ship");
-					cellEl.draggable = true;
+					cellEl.draggable = true; // this will re-add the drag effect... should we remove it?
 				}
 			}
 		}

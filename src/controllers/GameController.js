@@ -83,8 +83,6 @@ export default class GameController {
 				this.#opponent.boardSnapshot,
 			);
 
-			console.log(attack);
-
 			if (this.#opponent.areAllShipsSunk) return;
 			if (attack.wasAlreadyHit) return;
 			if (!attack.isShip) this.#switchTurn();
@@ -98,7 +96,7 @@ export default class GameController {
 
 	#opponentMakeAttack = async () => {
 		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-		await delay(500);
+		await delay(100);
 
 		const attack = this.#opponent.makeAttack(this.#self);
 		if (!attack) return;

@@ -21,7 +21,7 @@ gameController.init();
 
 /*
 todo
-add active class indicating participant turn
+add game over logic
 */
 /*
 const opponentBoard = new GameBoard();

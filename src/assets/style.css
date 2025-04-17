@@ -19,6 +19,10 @@ body {
 .board {
 	display: grid;
 	grid-template-columns: repeat(10, 2em);
+	grid-template-rows: repeat(10, 2em);
+	gap: 1px;
+	background-color: #107fff8e;
+	padding: 1px;
 }
 
 .board.disabled {
@@ -28,24 +32,12 @@ body {
 }
 
 .cell {
-	height: 2em;
-	width: 2em;
-	border-right: 1px solid #107fff8e;
-	border-bottom: 1px solid #107fff8e;
 	position: relative;
-}
-
-.cell:nth-child(-n + 10) {
-	border-top: 1px solid #107fff8e;
-}
-
-.cell:nth-child(10n + 1) {
-	border-left: 1px solid #107fff8e;
+	background: white;
 }
 
 .cell.ship {
-	outline: 1px solid #0065d8;
-	border: 1px solid #0065d8;
+	box-shadow: inset 0 0 0 2px #0065d8;
 }
 
 .cell.ship[draggable="true"] {
@@ -65,8 +57,7 @@ body {
 }
 
 .cell.hit {
-	outline: 1px solid red;
-	border: 1px solid red;
+	box-shadow: inset 0 0 0 2px red;
 }
 
 .board.opponent > .cell {
@@ -74,8 +65,7 @@ body {
 }
 
 .board.opponent > .cell:hover {
-	outline: 1px solid #000;
-	border: 1px solid #000;
+	box-shadow: inset 0 0 0 2px #000;
 }
 
 .battlefied_opponent {
@@ -106,8 +96,8 @@ body {
 
 .ghost {
 	position: absolute;
-	outline: 2px solid #0065d8;
-	border: 2px solid #0065d8;
+	box-shadow: inset 0 0 0 2px #0065d8;
+	box-sizing: border-box;
 	pointer-events: none;
 	top: -1000px;
 	left: -1000px;
