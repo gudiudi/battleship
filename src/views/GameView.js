@@ -133,10 +133,11 @@ export default class GameView {
 		const isHorizontal = coordinates[0][0] === coordinates.at(-1)[0];
 		const ghost = document.createElement("div");
 		const length = coordinates.length;
+		const cellSize = 2.2;
 
 		ghost.className = "ghost";
-		ghost.style.width = `${isHorizontal ? length * 2 : 2}em`;
-		ghost.style.height = `${isHorizontal ? 2 : length * 2}em`;
+		ghost.style.width = `${isHorizontal ? length * cellSize : cellSize}em`;
+		ghost.style.height = `${isHorizontal ? cellSize : length * cellSize}em`;
 
 		document.body.appendChild(ghost);
 		e.dataTransfer.setDragImage(ghost, 0, 0);

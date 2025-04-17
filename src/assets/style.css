@@ -18,8 +18,8 @@ body {
 
 .board {
 	display: grid;
-	grid-template-columns: repeat(10, 2em);
-	grid-template-rows: repeat(10, 2em);
+	grid-template-columns: repeat(10, 2.2em);
+	grid-template-rows: repeat(10, 2.2em);
 	gap: 1px;
 	background-color: #107fff8e;
 	padding: 1px;
