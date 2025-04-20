@@ -18,19 +18,32 @@ export default class GameController {
 
 	init() {
 		this.#view.init();
+		this.#populateBoards();
+		this.#setupSubscribers();
+	}
+
+	#populateBoards() {
 		this.#placeRandomShips(this.#self);
 		this.#placeRandomShips(this.#opponent);
 		this.#view.updateSelfBoard(this.#self.boardSnapshot);
 		this.#view.updateOpponentBoard(this.#opponent.boardSnapshot);
-		this.#setupSubscribers();
 	}
 
 	#startGame = () => {
-		this.#emitter.unsubscribe("gameStart", this.#startGame);
 		this.#emitter.publish("clearDraggableAttr");
 		this.#emitter.publish("disableDragAndDropListeners");
 		this.#started = true;
 		this.#switchTurn();
+	};
+
+	#restartGame = () => {
+		this.#started = false;
+		this.#turn = null;
+		this.#over = false;
+		this.#self.clearBoard();
+		this.#opponent.clearBoard();
+		this.#populateBoards();
+		this.#emitter.publish("enableDragAndDropListeners");
 	};
 
 	#gameOver() {
@@ -62,6 +75,7 @@ export default class GameController {
 	#setupSubscribers() {
 		const subscriptions = {
 			gameStart: this.#startGame,
+			restartGame: this.#restartGame,
 			cellClick: this.#handleCellClick,
 			dragStart: this.#handleDragStart,
 			drop: this.#handleDrop,
@@ -108,7 +122,7 @@ export default class GameController {
 
 	#opponentMakeAttack = async () => {
 		const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-		await delay(100);
+		await delay(500);
 
 		const attack = this.#opponent.makeAttack(this.#self);
 		if (!attack) return;

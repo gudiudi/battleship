@@ -45,7 +45,8 @@ export default class GameView {
 			resetDraggedElement: this.#resetDraggedElement,
 			clearDraggableAttr: this.#clearDraggableAttr,
 			disableDragAndDropListeners: this.#disableDragAndDropListeners,
-			switchTurn: this.#toggleBoards,
+			enableDragAndDropListeners: this.#setupDragAndDropListeners,
+			switchTurn: this.#switchTurn,
 			gameOver: this.#gameOver,
 		};
 
@@ -84,9 +85,9 @@ export default class GameView {
 		}
 	}
 
-	#setupDragAndDropListeners() {
+	#setupDragAndDropListeners = () => {
 		this.#toggleDragAndDropListeners(true);
-	}
+	};
 
 	#disableDragAndDropListeners = () => {
 		this.#toggleDragAndDropListeners(false);
@@ -166,7 +167,7 @@ export default class GameView {
 		return boardEl;
 	}
 
-	#toggleBoards = () => {
+	#switchTurn = () => {
 		const boards = [this.#selfBoardEl, this.#opponentBoardEl];
 		for (const board of boards) {
 			board.classList.contains("disabled")
@@ -186,8 +187,33 @@ export default class GameView {
 			opponent: "You lost!",
 		};
 
-		console.log(messages[winner]);
+		this.#createModal(messages[winner]);
 	};
+
+	#createModal(message) {
+		const modalEl = document.createElement("div");
+		modalEl.className = "modal-overlay";
+		const modalContentEl = document.createElement("div");
+		modalContentEl.className = "modal-content";
+		const p = document.createElement("p");
+		p.textContent = message;
+		const buttonEl = document.createElement("button");
+		buttonEl.className = "restart-btn";
+		buttonEl.textContent = "Restart";
+
+		buttonEl.addEventListener("click", (e) => {
+			this.#emitter.publish("restartGame");
+			const modal = e.target.closest(".modal-overlay");
+			modal?.remove();
+			this.#selfBoardEl.classList.remove("disabled");
+			this.#createStartButton();
+		});
+
+		modalContentEl.appendChild(p);
+		modalContentEl.appendChild(buttonEl);
+		modalEl.appendChild(modalContentEl);
+		document.querySelector("body").appendChild(modalEl);
+	}
 
 	#createGrid(boardEl, size) {
 		const fragment = document.createDocumentFragment();

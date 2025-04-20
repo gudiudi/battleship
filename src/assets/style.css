@@ -86,7 +86,8 @@ body {
 	transition: transform 0.1s ease, background-color 0.2s ease;
 }
 
-.start:hover {
+.start:hover,
+.restart-btn:hover {
 	background-color: #1874dd;
 }
 
@@ -132,27 +133,33 @@ body {
 	width: 100vw;
 	height: 100vh;
 	background: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 1000;
 }
 
 .modal-content {
 	background: white;
-	padding: 2rem;
-	border-radius: 10px;
+	padding: 20px;
 	text-align: center;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	font-size: 30px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
 
 .restart-btn {
-	margin-top: 1rem;
-	padding: 0.5rem 1rem;
-	font-size: 1rem;
-	cursor: pointer;
 	border: none;
-	border-radius: 5px;
-	background: #007bff;
-	color: white;
+	padding: 8px 20px;
+	background-color: #0065d8;
+	color: #fff;
+	font-size: 20px;
+	cursor: pointer;
+	transition: transform 0.1s ease, background-color 0.2s ease;
+}
+
+.restart-btn:active {
+	transform: scale(0.95);
 }

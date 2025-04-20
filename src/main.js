@@ -18,21 +18,3 @@ const view = new GameView(emitter);
 
 const gameController = new GameController(self, opponent, view, emitter);
 gameController.init();
-
-/*
-todo
-add game over logic
-*/
-/*
-const opponentBoard = new GameBoard();
-const opponent = new Computer(opponentBoard);
-makeFleet(opponent);
-ui.updateBoard(opponentBoard.boardSnapshot, ui.opponentBoardEl, false);
-ui.bindCellClickHandler(ui.opponentBoardEl, (x, y) => {
-	
-	if (success) {
-		console.log(opponentBoard.boardSnapshot);
-		ui.updateBoard(opponentBoard.boardSnapshot, ui.opponentBoardEl, true);
-	}
-});
-*/
