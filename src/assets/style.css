@@ -13,7 +13,7 @@ body {
 #app {
 	display: flex;
 	align-items: center;
-	gap: 8em;
+	gap: 6em;
 }
 
 .board {
@@ -68,6 +68,12 @@ body {
 	box-shadow: inset 0 0 0 2px #000;
 }
 
+.battlefield {
+	display: flex;
+	justify-content: center;
+	gap: 20px;
+}
+
 .battlefied_opponent {
 	position: relative;
 }
@@ -75,7 +81,7 @@ body {
 .start {
 	position: absolute;
 	top: 50%;
-	left: 50%;
+	left: 42%;
 	transform: translate(-50%, -50%);
 	border: none;
 	padding: 8px 20px;
@@ -162,4 +168,25 @@ body {
 
 .restart-btn:active {
 	transform: scale(0.95);
+}
+
+.ships {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.ship__preview {
+	display: flex;
+	gap: 1px;
+}
+
+.ship__preview__part {
+	background-color: #0065d8;
+	width: 11px;
+	height: 11px;
+}
+
+.ship__preview__part.sunk {
+	background-color: rgb(223, 83, 83);
 }

@@ -48,6 +48,8 @@ export default class GameView {
 			enableDragAndDropListeners: this.#setupDragAndDropListeners,
 			switchTurn: this.#switchTurn,
 			gameOver: this.#gameOver,
+			updateSelfStats: this.#updateSelfStats,
+			updateOpponentStats: this.#updateOpponentStats,
 		};
 
 		for (const [event, handler] of Object.entries(subscriptions)) {
@@ -160,7 +162,7 @@ export default class GameView {
 	#createBoard(className, disabled = false) {
 		const battlefieldEl = document.createElement("div");
 		const boardEl = document.createElement("div");
-		battlefieldEl.className = `battlefied_${className}`;
+		battlefieldEl.className = `battlefield battlefied_${className}`;
 		boardEl.className = `board ${className} ${disabled ? "disabled" : ""}`;
 		battlefieldEl.appendChild(boardEl);
 		this.#appEl.appendChild(battlefieldEl);
@@ -266,6 +268,45 @@ export default class GameView {
 	#preventDefault(e) {
 		if (e.target.closest(".cell")) e.preventDefault();
 	}
+
+	#createStats(boardEl) {
+		const statsEl = document.createElement("div");
+		statsEl.className = "stats";
+		const shipsEl = document.createElement("div");
+		shipsEl.className = "ships";
+		statsEl.appendChild(shipsEl);
+
+		const parent = boardEl.parentNode;
+		const isOpponent = boardEl === this.#opponentBoardEl;
+		isOpponent ? parent.append(statsEl) : parent.prepend(statsEl);
+		return shipsEl;
+	}
+
+	#updateStats(fleet, boardEl) {
+		let shipsEl = boardEl.parentNode.querySelector(".ships");
+
+		if (!shipsEl) {
+			shipsEl = this.#createStats(boardEl);
+		} else {
+			shipsEl.innerHTML = "";
+		}
+
+		for (const ship of fleet) {
+			const shipEl = document.createElement("div");
+			shipEl.className = "ship__preview";
+			for (let j = 0; j < ship.length; j++) {
+				const shipPartEl = document.createElement("div");
+				shipPartEl.className = `ship__preview__part ${ship.isSunk ? "sunk" : ""}`;
+				shipEl.appendChild(shipPartEl);
+			}
+			shipsEl.prepend(shipEl);
+		}
+	}
+
+	#updateSelfStats = (fleet) => this.#updateStats(fleet, this.#selfBoardEl);
+
+	#updateOpponentStats = (fleet) =>
+		this.#updateStats(fleet, this.#opponentBoardEl);
 
 	get selfBoardEl() {
 		return this.#selfBoardEl;

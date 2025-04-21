@@ -34,6 +34,8 @@ export default class GameController {
 		this.#emitter.publish("disableDragAndDropListeners");
 		this.#started = true;
 		this.#switchTurn();
+		this.#emitter.publish("updateSelfStats", this.#self.fleetSnapshot);
+		this.#emitter.publish("updateOpponentStats", this.#opponent.fleetSnapshot);
 	};
 
 	#restartGame = () => {
@@ -44,6 +46,8 @@ export default class GameController {
 		this.#opponent.clearBoard();
 		this.#populateBoards();
 		this.#emitter.publish("enableDragAndDropListeners");
+		this.#emitter.publish("updateSelfStats", this.#self.fleetSnapshot);
+		this.#emitter.publish("updateOpponentStats", this.#opponent.fleetSnapshot);
 	};
 
 	#gameOver() {
@@ -105,6 +109,10 @@ export default class GameController {
 				"updateOpponentBoard",
 				this.#opponent.boardSnapshot,
 			);
+			this.#emitter.publish(
+				"updateOpponentStats",
+				this.#opponent.fleetSnapshot,
+			);
 
 			if (this.#opponent.areAllShipsSunk) {
 				this.#gameOver();
@@ -128,6 +136,7 @@ export default class GameController {
 		if (!attack) return;
 
 		this.#emitter.publish("updateSelfBoard", this.#self.boardSnapshot);
+		this.#emitter.publish("updateSelfStats", this.#self.fleetSnapshot);
 
 		if (this.#self.areAllShipsSunk) {
 			this.#gameOver();

@@ -58,6 +58,10 @@ export default class Participant {
 		return this.#gameBoard.boardSnapshot;
 	}
 
+	get fleetSnapshot() {
+		return this.#gameBoard.fleetSnapshot;
+	}
+
 	get hasLost() {
 		return this.#gameBoard.areAllShipsSunk;
 	}
